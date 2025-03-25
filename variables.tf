@@ -127,7 +127,7 @@ variable "odoo_db_name" {
 }
 
 variable "no_database_list" {
-  default     = true
+  default     = false
   type        = bool
   description = "Enable/Disable exposing DB management capabilities in the login page"
 }

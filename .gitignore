@@ -44,3 +44,4 @@ provider.tf
 
 # Lambda module
 builds/
+.qodo
