@@ -1,4 +1,0 @@
-[submodule "custom_modules/odoo-modules"]
-	path = custom_modules/odoo-modules
-	url = https://github.com/Nitrokey/odoo-modules.git
-	branch = 15.0
