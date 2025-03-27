@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_lead_pool_admin,lead.pool.admin,model_lead_pool,base.group_system,1,1,1,1
+access_lead_pool_master_admin,lead.pool.master.admin,model_lead_pool,lead_pool.group_master_admin,1,1,1,1
+access_lead_pool_org_admin,lead.pool.org.admin,model_lead_pool,lead_pool.group_org_admin,1,1,1,1
+access_lead_pool_org_user,lead.pool.org.user,model_lead_pool,lead_pool.group_org_user,1,0,0,0
+access_bermuda_rater_api_user,bermuda.rater.api.user,model_bermuda_rater_api,base.group_user,1,0,0,0

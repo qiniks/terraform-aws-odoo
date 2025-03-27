@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Define security groups -->
+    <record id="module_category_lead_pool" model="ir.module.category">
+        <field name="name">Lead Pool</field>
+        <field name="description">Lead Pool Management</field>
+    </record>
+    
+    <!-- Organization Admin group -->
+    <record id="group_org_admin" model="res.groups">
+        <field name="name">Organization Admin</field>
+        <field name="category_id" ref="module_category_lead_pool"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    
+    <!-- Organization User group -->
+    <record id="group_org_user" model="res.groups">
+        <field name="name">Organization User</field>
+        <field name="category_id" ref="module_category_lead_pool"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Master Admin group -->
+    <record id="group_master_admin" model="res.groups">
+        <field name="name">Master Admin</field>
+        <field name="category_id" ref="module_category_lead_pool"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_system'))]"/>
+    </record>
+    
+    <!-- Record Rules -->
+    <!-- Organization admins can see all leads in their organization -->
+    <record id="lead_pool_org_admin_rule" model="ir.rule">
+        <field name="name">Organization Admin: All leads in organization</field>
+        <field name="model_id" ref="model_lead_pool"/>
+        <field name="domain_force">[('organization_id', '=', user.company_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_org_admin'))]"/>
+    </record>
+    
+    <!-- Organization users can only see available leads in their organization -->
+    <record id="lead_pool_org_user_rule" model="ir.rule">
+        <field name="name">Organization User: Available leads in organization</field>
+        <field name="model_id" ref="model_lead_pool"/>
+        <field name="domain_force">[('organization_id', '=', user.company_id.id), ('state', '=', 'available')]</field>
+        <field name="groups" eval="[(4, ref('group_org_user'))]"/>
+    </record>
+
+    <!-- CRM Lead Pool Rules -->
+    <!-- Users can only see their assigned leads and pool leads -->
+    <record id="crm_lead_pool_user_rule" model="ir.rule">
+        <field name="name">Users: Pool Leads and Assigned Leads</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="domain_force">['|', ('is_pool_lead', '=', True), ('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_org_user'))]"/>
+    </record>
+
+    <!-- Org Admins can see all leads in their organization -->
+    <record id="crm_lead_pool_org_admin_rule" model="ir.rule">
+        <field name="name">Org Admin: All Organization Leads</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="domain_force">[('company_id', '=', user.company_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_org_admin'))]"/>
+    </record>
+
+    <!-- Master Admin can see all leads -->
+    <record id="crm_lead_pool_master_admin_rule" model="ir.rule">
+        <field name="name">Master Admin: All Leads</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_master_admin'))]"/>
+    </record>
+</odoo> 

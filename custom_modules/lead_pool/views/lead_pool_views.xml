@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit CRM Lead Form View -->
+    <record id="crm_lead_view_form_inherit" model="ir.ui.view">
+        <field name="name">crm.lead.view.form.inherit</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="claim_lead" 
+                        string="Claim Lead" 
+                        type="object" 
+                        class="oe_highlight"
+                        attrs="{'invisible': ['|', ('is_pool_lead', '=', False), ('user_id', '!=', False)]}"
+                        groups="lead_pool.group_org_user"/>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="is_pool_lead" readonly="1"/>
+                <field name="benefits" attrs="{'readonly': [('is_pool_lead', '=', False)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='email_from']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='email_from']" position="after">
+                <field name="obfuscated_email" readonly="1" attrs="{'invisible': [('is_pool_lead', '=', True), ('user_id', '=', False)]}"/>
+                <field name="original_email" groups="lead_pool.group_org_admin,lead_pool.group_master_admin"/>
+            </xpath>
+            <xpath expr="//field[@name='phone']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='phone']" position="after">
+                <field name="obfuscated_phone" readonly="1" attrs="{'invisible': [('is_pool_lead', '=', True), ('user_id', '=', False)]}"/>
+                <field name="original_phone" groups="lead_pool.group_org_admin,lead_pool.group_master_admin"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Create a separate Lead view for the pool -->
+    <record id="crm_lead_pool_view_tree" model="ir.ui.view">
+        <field name="name">crm.lead.pool.tree</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <tree string="Lead Pool">
+                <field name="name"/>
+                <field name="partner_name"/>
+                <field name="benefits"/>
+                <field name="is_pool_lead" invisible="1"/>
+                <field name="user_id" invisible="1"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="create_date"/>
+                <button name="claim_lead" string="Claim" type="object" class="btn btn-primary" attrs="{'invisible': [('user_id', '!=', False)]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Lead Pool Tree View -->
+    <record id="view_lead_pool_tree" model="ir.ui.view">
+        <field name="name">lead.pool.tree</field>
+        <field name="model">lead.pool</field>
+        <field name="arch" type="xml">
+            <tree string="Lead Pool">
+                <field name="name"/>
+                <field name="company_name"/>
+                <field name="state"/>
+                <field name="organization_id" groups="base.group_system"/>
+            </tree>
+        </field>
+    </record>
+    
+    <!-- Lead Pool Form View -->
+    <record id="view_lead_pool_form" model="ir.ui.view">
+        <field name="name">lead.pool.form</field>
+        <field name="model">lead.pool</field>
+        <field name="arch" type="xml">
+            <form string="Lead Pool">
+                <header>
+                    <button name="assign_lead" 
+                            string="Assign to Me" 
+                            type="object" 
+                            class="oe_highlight" 
+                            attrs="{'invisible': [('state', '!=', 'available')]}"
+                            groups="lead_pool.group_org_user,lead_pool.group_org_admin"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="company_name"/>
+                            <field name="organization_id" groups="base.group_system" options="{'no_create': True}"/>
+                            <field name="assigned_user_id" readonly="1" attrs="{'invisible': [('state', '!=', 'assigned')]}"/>
+                        </group>
+                        <group>
+                            <field name="email" groups="lead_pool.group_org_admin,base.group_system"/>
+                            <field name="phone" groups="lead_pool.group_org_admin,base.group_system"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Lead Pool Search View -->
+    <record id="view_lead_pool_search" model="ir.ui.view">
+        <field name="name">lead.pool.search</field>
+        <field name="model">lead.pool</field>
+        <field name="arch" type="xml">
+            <search string="Search Lead Pool">
+                <field name="name"/>
+                <field name="company_name"/>
+                <filter string="Available" name="available" domain="[('state', '=', 'available')]"/>
+                <filter string="Assigned" name="assigned" domain="[('state', '=', 'assigned')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="groupby_state" context="{'group_by': 'state'}"/>
+                    <filter string="Organization" name="groupby_org" context="{'group_by': 'organization_id'}" groups="base.group_system"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Actions for the views -->
+    <record id="action_lead_pool" model="ir.actions.act_window">
+        <field name="name">Lead Pool</field>
+        <field name="res_model">lead.pool</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_available': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No leads in the pool yet.
+            </p>
+            <p>
+                Create a new lead to add it to the shared lead pool.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action for CRM Lead Pool -->
+    <record id="action_crm_lead_pool" model="ir.actions.act_window">
+        <field name="name">Lead Pool</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('is_pool_lead', '=', True)]</field>
+        <field name="view_id" ref="crm_lead_pool_view_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No leads in the pool yet.
+            </p>
+        </field>
+    </record>
+    
+    <!-- Add Lead Pool menu to the CRM menu structure -->
+    <menuitem id="menu_crm_lead_pool" 
+              name="Lead Pool" 
+              parent="crm.crm_menu_root" 
+              action="action_crm_lead_pool" 
+              sequence="4"/>
+              
+    <!-- My Leads tree view -->
+    <record id="view_my_leads_tree" model="ir.ui.view">
+        <field name="name">crm.lead.my.tree</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <tree string="My Leads">
+                <field name="name"/>
+                <field name="partner_name"/>
+                <field name="email_from"/>
+                <field name="phone"/>
+                <field name="create_date"/>
+                <button name="convert_to_opportunity" string="Convert to Opportunity" type="object" class="btn btn-primary"/>
+            </tree>
+        </field>
+    </record>
+    
+    <!-- Action for My Leads - claimed leads that belong to current user -->
+    <record id="action_my_leads" model="ir.actions.act_window">
+        <field name="name">My Leads</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('user_id', '=', uid), ('is_pool_lead', '=', False), ('type', '=', 'lead')]</field>
+        <field name="view_id" ref="view_my_leads_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No leads claimed yet.
+            </p>
+            <p>
+                Claim leads from the Lead Pool to see them here.
+            </p>
+        </field>
+    </record>
+    
+    <!-- Action for My Opportunities -->
+    <record id="action_my_opportunities" model="ir.actions.act_window">
+        <field name="name">My Opportunities</field>
+        <field name="res_model">crm.lead</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('user_id', '=', uid), ('type', '=', 'opportunity')]</field>
+        <field name="context">{'default_type': 'opportunity'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No opportunities yet.
+            </p>
+            <p>
+                Convert leads to opportunities to see them in this pipeline.
+            </p>
+        </field>
+    </record>
+    
+    <!-- Add My Leads menu to the CRM menu structure -->
+    <menuitem id="menu_my_leads" 
+              name="My Leads" 
+              parent="crm.crm_menu_root" 
+              action="action_my_leads" 
+              sequence="3"/>
+              
+    <!-- Add My Opportunities menu to the CRM menu structure -->
+    <menuitem id="menu_my_opportunities" 
+              name="My Pipeline" 
+              parent="crm.crm_menu_root" 
+              action="action_my_opportunities" 
+              sequence="2"/>
+</odoo> 
