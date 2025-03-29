@@ -8,8 +8,8 @@ NC='\033[0m' # No Color
 BLUE='\033[0;34m'
 
 # Configuration
-CLOUDFRONT_DOMAIN="digqq1kewj3d6.cloudfront.net"
-ODOO_DB="odoodbz"
+CLOUDFRONT_DOMAIN="d290mq7kqg95wg.cloudfront.net"
+ODOO_DB="odood"
 SECRET_ID="odoo-root-user"
 
 # Function to print step information
