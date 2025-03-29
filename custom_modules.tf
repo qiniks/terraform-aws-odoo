@@ -23,7 +23,7 @@ module "s3_bucket" {
 
   count = (local.custom_image || local.modules_files_length || local.python_files_length) ? 1 : 0
 
-  bucket        = "${var.name}-odoo-custom"
+  bucket        = "${var.name}-odoo-custom-121312"
   tags          = var.tags
   force_destroy = true
 }
