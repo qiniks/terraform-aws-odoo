@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- API product views with button and status label -->
+    <record id="view_api_product_tree" model="ir.ui.view">
+    <field name="name">api.product.tree</field>
+    <field name="model">api.product</field>
+    <field name="arch" type="xml">
+        <tree decoration-muted="is_converted" decoration-success="is_converted" default_order="is_converted, name">
+            <field name="api_id"/>
+            <field name="name"/>
+            <field name="date"/>
+            <field name="design"/>
+            <!-- New Delivery Status column -->
+            <field name="delivery_status" string="Delivery Status"/>
+            <!-- Existing status label -->
+            <field name="status_label" string="Status" widget="badge" 
+                   decoration-success="is_converted == True" 
+                   decoration-info="is_converted == False"/>
+            <!-- Button column at the end -->
+            <field name="is_converted" invisible="1"/>
+            <button name="create_delivery_order"
+                    string="Create Delivery"
+                    type="object"
+                    class="btn-primary"
+                    attrs="{'invisible': [('is_converted', '=', True)]}"/>
+        </tree>
+    </field>
+</record>
+    
+    <record id="view_api_product_search" model="ir.ui.view">
+        <field name="name">api.product.search</field>
+        <field name="model">api.product</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="api_id"/>
+                <field name="design"/>
+                <separator/>
+                <filter string="Ready for Delivery" name="not_converted" domain="[('is_converted', '=', False)]"/>
+                <filter string="Converted to Delivery" name="converted" domain="[('is_converted', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Conversion Status" name="groupby_status" context="{'group_by': 'is_converted'}"/>
+                    <filter string="Design" name="groupby_design" context="{'group_by': 'design'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    
+    <record id="view_api_product_form" model="ir.ui.view">
+        <field name="name">api.product.form</field>
+        <field name="model">api.product</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="create_delivery_order" 
+                            string="Create Delivery Order" 
+                            type="object" 
+                            class="btn-primary"
+                            attrs="{'invisible': [('is_converted', '=', True)]}"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Product Name"/>
+                        </h1>
+                        <h3>
+                            <field name="status_label" string="Status" widget="badge" decoration-success="is_converted == True" decoration-warning="is_converted == False" class="oe_inline"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="api_id"/>
+                            <field name="date"/>
+                            <field name="is_converted"/>
+                        </group>
+                        <group>
+                            <field name="design"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_view_api_products" model="ir.actions.act_window">
+        <field name="name">API Products</field>
+        <field name="res_model">api.product</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_not_converted': 1}</field>
+    </record>
+    
+    <!-- Multi-record action button for API Products -->
+    <record id="action_create_delivery_from_api_products" model="ir.actions.server">
+        <field name="name">Create Delivery Orders</field>
+        <field name="model_id" ref="model_api_product"/>
+        <field name="binding_model_id" ref="model_api_product"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.create_delivery_orders()
+        </field>
+    </record>
+    
+    <menuitem id="menu_api_products"
+              name="API Products"
+              parent="stock.menu_stock_root"
+              action="action_view_api_products"
+              sequence="16"/>
+</odoo>

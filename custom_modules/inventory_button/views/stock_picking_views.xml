@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Server action to trigger the method -->
+    <record id="action_generate_random_deliveries" model="ir.actions.server">
+        <field name="name">Generate Random Deliveries</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="state">code</field>
+        <field name="code">
+# Call the function to fetch data from the local API
+env['api.product'].fetch_and_store_api_data()
+
+# Return a notification and redirect to the API Products list
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'API Products',
+    'res_model': 'api.product',
+    'view_mode': 'tree,form',
+    'target': 'current',
+}
+        </field>
+    </record>
+
+    <!-- Menu item in the Inventory header -->
+    <menuitem id="menu_random_deliveries"
+              name="Random Deliveries"
+              parent="stock.menu_stock_root"
+              action="action_generate_random_deliveries"
+              sequence="15"/>
+
+    <!-- Add button to Inventory form view's header -->
+    <record id="view_stock_picking_form_inherit_header" model="ir.ui.view">
+        <field name="name">stock.picking.form.inherit.header</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_custom_button" 
+                        string="Fetch API Data" 
+                        type="object" 
+                        class="btn-primary"
+                        attrs="{'invisible': [('state', 'in', ['cancel', 'done'])]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    
+    <!-- API product views -->
+    <record id="view_api_product_list" model="ir.ui.view">
+        <field name="name">api.product.list</field>
+        <field name="model">api.product</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="api_id"/>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="design"/>
+            </tree>
+        </field>
+    </record>
+    
+    <record id="view_api_product_form" model="ir.ui.view">
+        <field name="name">api.product.form</field>
+        <field name="model">api.product</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="api_id"/>
+                        <field name="name"/>
+                        <field name="date"/>
+                        <field name="design"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_view_api_products" model="ir.actions.act_window">
+        <field name="name">API Products</field>
+        <field name="res_model">api.product</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+    <menuitem id="menu_api_products"
+              name="API Products"
+              parent="stock.menu_stock_root"
+              action="action_view_api_products"
+              sequence="16"/>
+
+    <!-- Multi-record action button for API Products -->
+    <record id="action_create_delivery_from_api_products" model="ir.actions.server">
+        <field name="name">Create Delivery Order</field>
+        <field name="model_id" ref="model_api_product"/>
+        <field name="binding_model_id" ref="model_api_product"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.create_delivery_orders()
+        </field>
+    </record>
+</odoo>

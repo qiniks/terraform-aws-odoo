@@ -1,0 +1,182 @@
+[
+    {
+            "id": 1,
+            "name": "T-Shirt",
+            "date": "2025-03-01",
+            "design": "Modern"
+    },
+    {
+            "id": 2,
+            "name": "Shirt",
+            "date": "2025-03-02",
+            "design": "Classic"
+    },
+    {
+            "id": 3,
+            "name": "T-Shirt",
+            "date": "2025-03-03",
+            "design": "Minimal"
+    },
+    {
+            "id": 4,
+            "name": "Shirt",
+            "date": "2025-03-04",
+            "design": "Vintage"
+    },
+    {
+            "id": 5,
+            "name": "T-Shirt",
+            "date": "2025-03-05",
+            "design": "Abstract"
+    },
+    {
+            "id": 6,
+            "name": "Shirt",
+            "date": "2025-03-06",
+            "design": "Geometric"
+    },
+    {
+            "id": 7,
+            "name": "T-Shirt",
+            "date": "2025-03-07",
+            "design": "Floral"
+    },
+    {
+            "id": 8,
+            "name": "Shirt",
+            "date": "2025-03-08",
+            "design": "Industrial"
+    },
+    {
+            "id": 9,
+            "name": "T-Shirt",
+            "date": "2025-03-09",
+            "design": "Scandinavian"
+    },
+    {
+            "id": 10,
+            "name": "Shirt",
+            "date": "2025-03-10",
+            "design": "Bohemian"
+    },
+    {
+            "id": 11,
+            "name": "T-Shirt",
+            "date": "2025-03-11",
+            "design": "Rustic"
+    },
+    {
+            "id": 12,
+            "name": "Shirt",
+            "date": "2025-03-12",
+            "design": "Contemporary"
+    },
+    {
+            "id": 13,
+            "name": "T-Shirt",
+            "date": "2025-03-13",
+            "design": "Eclectic"
+    },
+    {
+            "id": 14,
+            "name": "Shirt",
+            "date": "2025-03-14",
+            "design": "Art Deco"
+    },
+    {
+            "id": 15,
+            "name": "T-Shirt",
+            "date": "2025-03-15",
+            "design": "Retro"
+    },
+    {
+            "id": 16,
+            "name": "Shirt",
+            "date": "2025-03-16",
+            "design": "Futuristic"
+    },
+    {
+            "id": 17,
+            "name": "T-Shirt",
+            "date": "2025-03-17",
+            "design": "Baroque"
+    },
+    {
+            "id": 18,
+            "name": "Shirt",
+            "date": "2025-03-18",
+            "design": "Gothic"
+    },
+    {
+            "id": 19,
+            "name": "T-Shirt",
+            "date": "2025-03-19",
+            "design": "Tropical"
+    },
+    {
+            "id": 20,
+            "name": "Shirt",
+            "date": "2025-03-20",
+            "design": "Nautical"
+    },
+    {
+            "id": 21,
+            "name": "T-Shirt",
+            "date": "2025-03-21",
+            "design": "Urban"
+    },
+    {
+            "id": 22,
+            "name": "Shirt",
+            "date": "2025-03-22",
+            "design": "Traditional"
+    },
+    {
+            "id": 23,
+            "name": "T-Shirt",
+            "date": "2025-03-23",
+            "design": "Mid-Century"
+    },
+    {
+            "id": 24,
+            "name": "Shirt",
+            "date": "2025-03-24",
+            "design": "Pop Art"
+    },
+    {
+            "id": 25,
+            "name": "T-Shirt",
+            "date": "2025-03-25",
+            "design": "Country"
+    },
+    {
+            "id": 26,
+            "name": "Shirt",
+            "date": "2025-03-26",
+            "design": "Shabby Chic"
+    },
+    {
+            "id": 27,
+            "name": "T-Shirt",
+            "date": "2025-03-27",
+            "design": "Oriental"
+    },
+    {
+            "id": 28,
+            "name": "Shirt",
+            "date": "2025-03-28",
+            "design": "Mediterranean"
+    },
+    {
+            "id": 29,
+            "name": "T-Shirt",
+            "date": "2025-03-29",
+            "design": "Victorian"
+    },
+    {
+            "id": 30,
+            "name": "Shirt",
+            "date": "2025-03-30",
+            "design": "Zen"
+    }
+]
