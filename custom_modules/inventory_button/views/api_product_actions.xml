@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action window definition for API Products -->
+    <record id="action_view_api_products" model="ir.actions.act_window">
+        <field name="name">API Products</field>
+        <field name="res_model">api.product</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+    
+    <menuitem id="menu_api_products"
+            name="API Products"
+            parent="stock.menu_stock_root"
+            action="action_view_api_products"
+            sequence="16"/>
+
+
+    <menuitem id="stock.menu_product_variant_config_stock"
+    name="Products"
+    parent="stock.menu_product_in_config_stock"
+    active="False"/>
+
+
+    <!-- Hide 'Reporting' menu item by setting active="False" -->
+    <menuitem id="stock.menu_warehouse_report" name="Reporting" sequence="99" parent="stock.menu_stock_root" active="False"/>
+</odoo>

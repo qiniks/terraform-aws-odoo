@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Designer Form View -->
+    <record id="inventory_designer_form_view" model="ir.ui.view">
+        <field name="name">inventory.designer.form</field>
+        <field name="model">inventory.designer</field>
+        <field name="arch" type="xml">
+            <form string="Designer">
+                <header>
+                    <button name="toggle_inventory_access" string="Toggle Inventory Access" type="object" class="oe_highlight" />
+                </header>
+                <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_128'}" />
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Designer Name" />
+                        </h1>
+                        <h3>
+                            <field name="email" placeholder="Email" />
+                        </h3>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="phone" placeholder="Phone Number" />
+                            <field name="password_input" password="1" placeholder="Password" attrs="{'required': [('user_id', '=', False)], 'invisible': [('user_id', '!=', False)]}" />
+                            <field name="has_inventory_access" />
+                            <field name="user_id" readonly="1" attrs="{'invisible': [('user_id', '=', False)]}" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Assigned Orders" name="assigned_orders">
+                            <button name="action_view_assigned_orders" string="View All Assigned Orders" type="object" class="oe_highlight" />
+                            <field name="assigned_orders_count" widget="statinfo" string=" Assigned Orders" />
+                        </page>
+                        <page string="Statistics">
+                            <group>
+                                <group string="Filter Options" colspan="2" col="2">
+                                    <field name="filter_year" options="{'no_create': True}" />
+                                    <field name="filter_month" options="{'no_create': True}" />
+                                </group>
+                            </group>
+                            
+                        
+                            <div class="o_stat_box">
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Average Task Time (hrs)</th>
+                                            <th>Assigned Orders</th>
+                                            <th>Completed Orders</th>
+                                            <th>Completion Rate (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><field name="avg_turnaround_hours" widget="float_time" readonly="1"/></td>
+                                            <td><field name="assigned_orders_count" readonly="1"/></td>
+                                            <td><field name="completed_orders_count" readonly="1"/></td>
+                                            <td><field name="completion_rate" widget="percentpie" readonly="1"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                        
+                                <table class="table table-sm table-bordered mt-3">
+                                    <thead>
+                                        <tr>
+                                            <th>Ongoing Tasks</th>
+                                            <th>Fastest Task (hrs)</th>
+                                            <th>Slowest Task (hrs)</th>
+                                            <th>Active Work Days</th>
+                                            <th>Last Task Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><field name="ongoing_orders_count" readonly="1"/></td>
+                                            <td><field name="min_turnaround_hours" widget="float_time" readonly="1"/></td>
+                                            <td><field name="max_turnaround_hours" widget="float_time" readonly="1"/></td>
+                                            <td><field name="active_days_count" readonly="1"/></td>
+                                            <td><field name="last_completed_order_date" readonly="1"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </page>
+                        
+                        
+                        
+                        
+                        
+                        
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" />
+                    <field name="activity_ids" widget="mail_activity" />
+                    <field name="message_ids" widget="mail_thread" />
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Designer Kanban View -->
+    <record id="inventory_designer_kanban_view" model="ir.ui.view">
+        <field name="name">inventory.designer.kanban</field>
+        <field name="model">inventory.designer</field>
+        <field name="arch" type="xml">
+            <kanban class="o_res_partner_kanban">
+                <field name="id" />
+                <field name="name" />
+                <field name="email" />
+                <field name="phone" />
+                <field name="assigned_orders_count" />
+                <field name="completed_orders_count" />
+                <field name="avg_turnaround_hours" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_res_partner_kanban">
+                            <div class="o_kanban_image">
+                                <img t-att-src="kanban_image('inventory.designer', 'image_128', record.id.raw_value)" alt="Designer Image" class="o_image_64_contain" />
+                            </div>
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title">
+                                    <field name="name" />
+                                </strong>
+                                <div>
+                                    <i class="fa fa-envelope" role="img" aria-label="Email" title="Email"></i>
+                                    <field name="email" />
+                                </div>
+                                <div t-if="record.phone.raw_value">
+                                    <i class="fa fa-phone" role="img" aria-label="Phone" title="Phone"></i>
+                                    <field name="phone" />
+                                </div>
+                                <div class="o_kanban_tags_section">
+                                    <ul>
+                                        <li class="badge badge-primary">
+                                            <span>Assigned: </span>
+                                            <field name="assigned_orders_count" />
+                                        </li>
+                                        <li class="badge badge-success">
+                                            <span>Completed: </span>
+                                            <field name="completed_orders_count" />
+                                        </li>
+                                        <li class="badge badge-info">
+                                            <span>Avg Time: </span>
+                                            <field name="avg_turnaround_hours" widget="float_time" />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Designer Tree View -->
+    <record id="inventory_designer_tree_view" model="ir.ui.view">
+        <field name="name">inventory.designer.tree</field>
+        <field name="model">inventory.designer</field>
+        <field name="arch" type="xml">
+            <tree string="Designers">
+                <field name="name" />
+                <field name="email" />
+                <field name="phone" />
+                <field name="assigned_orders_count" />
+                <field name="completed_orders_count" />
+                <field name="avg_turnaround_hours" widget="float_time" />
+                <field name="has_inventory_access" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Designer Search View -->
+    <record id="inventory_designer_search_view" model="ir.ui.view">
+        <field name="name">inventory.designer.search</field>
+        <field name="model">inventory.designer</field>
+        <field name="arch" type="xml">
+            <search string="Search Designers">
+                <field name="name" />
+                <field name="email" />
+                <field name="phone" />
+                <separator />
+                <filter string="With Inventory Access" name="with_inventory_access" domain="[('has_inventory_access', '=', True)]" />
+                <filter string="Without Inventory Access" name="without_inventory_access" domain="[('has_inventory_access', '=', False)]" />
+                <group expand="0" string="Group By">
+                    <filter string="Inventory Access" name="group_by_inventory_access" context="{'group_by': 'has_inventory_access'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Designer Action Window -->
+    <record id="action_inventory_designers" model="ir.actions.act_window">
+        <field name="name">Designers</field>
+        <field name="res_model">inventory.designer</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new designer
+            </p>
+            <p>
+                Create designers who will work on design orders.
+            </p>
+        </field>
+    </record>
+
+    <!-- Designer Menu -->
+    <menuitem id="menu_inventory_designers"
+            name="Designers"
+            parent="stock.menu_stock_root"
+            action="action_inventory_designers"
+            sequence="20" />
+</odoo>

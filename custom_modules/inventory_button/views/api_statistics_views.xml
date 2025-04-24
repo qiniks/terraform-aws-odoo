@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Graph View -->
+    <record id="view_api_statistics_graph" model="ir.ui.view">
+        <field name="name">inventory.api.statistics.graph</field>
+        <field name="model">inventory.api.statistics</field>
+        <field name="arch" type="xml">
+            <graph string="API Statistics" sample="1" type="bar">
+                <field name="designer_id"/>
+                <field name="date" interval="day"/>
+                <field name="completed_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+    
+    <!-- Pivot View -->
+    <record id="view_api_statistics_pivot" model="ir.ui.view">
+        <field name="name">inventory.api.statistics.pivot</field>
+        <field name="model">inventory.api.statistics</field>
+        <field name="arch" type="xml">
+            <pivot string="API Statistics" sample="1">
+                <field name="designer_id" type="row"/>
+                <field name="date" interval="day" type="col"/>
+                <field name="completed_count" type="measure"/>
+                <field name="earnings" type="measure"/>
+                <field name="amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    
+    <!-- Calendar View -->
+    <record id="view_api_statistics_calendar" model="ir.ui.view">
+        <field name="name">inventory.api.statistics.calendar</field>
+        <field name="model">inventory.api.statistics</field>
+        <field name="arch" type="xml">
+            <calendar string="Completion Calendar" date_start="date" color="designer_id" mode="month">
+                <field name="completed_count"/>
+                <field name="earnings"/>
+            </calendar>
+        </field>
+    </record>
+    
+    <!-- List View for Statistics -->
+    <record id="view_api_statistics_list" model="ir.ui.view">
+        <field name="name">inventory.api.statistics.list</field>
+        <field name="model">inventory.api.statistics</field>
+        <field name="arch" type="xml">
+            <tree string="Designer Performance" create="false" delete="false" default_order="date desc, completed_count desc">
+                <field name="designer_id"/>
+                <field name="date"/>
+                <field name="completed_count" sum="Total Completed"/>
+                <field name="pending_count" sum="Total Pending"/>
+                <field name="quantity" sum="Total Products"/>
+                <field name="completion_rate" widget="percentage" avg="Average Completion Rate"/>
+                <field name="earnings" sum="Total Earnings" widget="monetary"/>
+                <field name="amount" sum="Total Order Value" widget="monetary"/>
+            </tree>
+        </field>
+    </record>
+    
+    <!-- Search View -->
+    <record id="view_api_statistics_search" model="ir.ui.view">
+        <field name="name">inventory.api.statistics.search</field>
+        <field name="model">inventory.api.statistics</field>
+        <field name="arch" type="xml">
+            <search string="Search Statistics">
+                <field name="designer_id"/>
+                <field name="source_id"/>
+                <field name="product_id"/>
+                <field name="date"/>
+                <filter string="This Month" name="this_month" domain="[('date','&gt;=',(context_today()+relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Last Month" name="last_month" domain="[('date','&gt;=',(context_today()+relativedelta(months=-1, day=1)).strftime('%Y-%m-%d')),('date','&lt;',(context_today()+relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="This Week" name="this_week" domain="[('date','&gt;=',(context_today()+relativedelta(weeks=-1, days=1, weekday=0)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Completed Tasks" name="completed" domain="[('completed_count', '>', 0)]"/>
+                <filter string="Pending Tasks" name="pending" domain="[('pending_count', '>', 0)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Designer" name="group_by_designer" context="{'group_by': 'designer_id'}"/>
+                    <filter string="Source" name="group_by_source" context="{'group_by': 'source_id'}"/>
+                    <filter string="Date" name="group_by_date" context="{'group_by': 'date:week'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Main Statistics Action - Added groupby designer to context -->
+    <record id="action_api_statistics" model="ir.actions.act_window">
+        <field name="name">API Statistics</field>
+        <field name="res_model">inventory.api.statistics</field>
+        <field name="view_mode">list,graph,pivot,calendar</field>
+        <field name="search_view_id" ref="view_api_statistics_search"/>
+        <field name="context">{'search_default_this_month': 1, 'search_default_group_by_designer': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No statistics data available yet
+            </p>
+            <p>
+                Statistics are generated automatically based on API products, 
+                designer assignments, and task completions.
+            </p>
+        </field>
+    </record>
+    
+    <!-- Main Statistics Form View -->
+    <record id="view_api_statistics_dashboard" model="ir.ui.view">
+        <field name="name">inventory.api.statistics.dashboard</field>
+        <field name="model">inventory.api.statistics</field>
+        <field name="arch" type="xml">
+            <form string="API Statistics Dashboard" create="false" edit="false" delete="false">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_api_statistics)d" type="action" string="View Graph" class="oe_stat_button" icon="fa-bar-chart"/>
+                    </div>
+                    <div class="row mt-4 mb-4">
+                        <div class="col-md-4">
+                            <div class="o_stat_info bg-primary text-white p-3 text-center rounded">
+                                <span class="o_stat_value"><field name="quantity" widget="statinfo" nolabel="1"/></span>
+                                <span class="o_stat_text">Total Products</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="o_stat_info bg-success text-white p-3 text-center rounded">
+                                <span class="o_stat_value"><field name="completed_count" widget="statinfo" nolabel="1"/></span>
+                                <span class="o_stat_text">Completed Tasks</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="o_stat_info bg-warning text-white p-3 text-center rounded">
+                                <span class="o_stat_value"><field name="pending_count" widget="statinfo" nolabel="1"/></span>
+                                <span class="o_stat_text">Pending Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="earnings" widget="monetary" string="Total Earnings"/>
+                            <field name="amount" widget="monetary" string="Order Value"/>
+                        </group>
+                        <group>
+                            <field name="designer_id"/>
+                            <field name="source_id"/>
+                            <field name="date"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Designer Performance Dashboard -->
+    <record id="view_designer_performance_dashboard" model="ir.ui.view">
+        <field name="name">designer.performance.dashboard</field>
+        <field name="model">inventory.api.statistics</field>
+        <field name="arch" type="xml">
+            <form string="Designer Performance Dashboard" create="false" edit="false" delete="false">
+                <sheet>
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="o_stat_info bg-primary text-white p-3 text-center rounded">
+                                <span class="o_stat_value"><field name="completed_count" widget="statinfo" nolabel="1"/></span>
+                                <span class="o_stat_text"> Completed Tasks</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="o_stat_info bg-success text-white p-3 text-center rounded">
+                                <span class="o_stat_value"><field name="earnings" widget="monetary" nolabel="1"/></span>
+                                <span class="o_stat_text"> Designer Earnings</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="o_stat_info bg-info text-white p-3 text-center rounded">
+                                <span class="o_stat_value"><field name="amount" widget="monetary" nolabel="1"/></span>
+                                <span class="o_stat_text"> Order Value</span>
+                            </div>
+                        </div>
+                    </div>
+                      <notebook>
+                        <page string="Performance">
+                            <field name="designer_id" invisible="1"/>
+                            <field name="product_id" invisible="1"/>
+                            <group>
+                                <group string="Designer Details">
+                                    <field name="designer_id"/>
+                                    <field name="date"/>
+                                    <field name="quantity"/>
+                                </group>                                <group string="Performance Metrics">
+                                    <field name="completed_count"/>
+                                    <field name="pending_count"/>
+                                    <field name="earnings"/>
+                                </group>
+                            </group>
+                        </page>                        <page string="Daily Products">
+                            <group>
+                                <field name="date" invisible="1"/>
+                                <field name="designer_id" invisible="1"/>
+                            </group>
+                            <field name="api_products" widget="many2many" context="{'designer_id': designer_id, 'date': date}">
+                                <tree string="Designer's Daily Products">
+                                    <field name="name"/>
+                                    <field name="design"/>
+                                    <field name="quantity" sum="Total"/>
+                                    <field name="state"/>
+                                    <field name="design_difficulty" widget="priority"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Source Performance Dashboard -->
+    <record id="view_source_performance_dashboard" model="ir.ui.view">
+        <field name="name">source.performance.dashboard</field>
+        <field name="model">inventory.api.statistics</field>
+        <field name="arch" type="xml">
+            <form string="API Source Performance Dashboard" create="false" edit="false" delete="false">
+                <sheet>
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="o_stat_info bg-primary text-white p-3 text-center rounded">
+                                <span class="o_stat_value"><field name="quantity" widget="statinfo" nolabel="1"/></span>
+                                <span class="o_stat_text">Total Products</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="o_stat_info bg-success text-white p-3 text-center rounded">
+                                <span class="o_stat_value"><field name="completed_count" widget="statinfo" nolabel="1"/></span>
+                                <span class="o_stat_text">Completed Tasks</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="o_stat_info bg-warning text-white p-3 text-center rounded">
+                                <span class="o_stat_value"><field name="pending_count" widget="statinfo" nolabel="1"/></span>
+                                <span class="o_stat_text">Pending Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <notebook>
+                        <page string="Source Details">
+                            <group>
+                                <group string="API Source">
+                                    <field name="source_id"/>
+                                    <field name="date"/>
+                                </group>
+                                <group string="Performance Metrics">
+                                    <field name="amount" widget="monetary"/>
+                                    <field name="completed_count"/>
+                                    <field name="pending_count"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Designer Performance Dashboard Action -->
+    <record id="action_designer_performance" model="ir.actions.act_window">
+        <field name="name">Designer Performance</field>
+        <field name="res_model">inventory.api.statistics</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_designer_performance_dashboard"/>
+        <field name="target">main</field>
+        <field name="context">{'search_default_this_month': 1}</field>
+    </record>
+    
+    <!-- API Source Performance Dashboard Action -->
+    <record id="action_source_performance" model="ir.actions.act_window">
+        <field name="name">API Source Performance</field>
+        <field name="res_model">inventory.api.statistics</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_source_performance_dashboard"/>
+        <field name="target">main</field>
+        <field name="context">{'search_default_this_month': 1}</field>
+    </record>
+    
+    <!-- Menu entries moved to menu_structure.xml -->
+</odoo>

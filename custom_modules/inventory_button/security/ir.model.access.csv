@@ -1,2 +1,13 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_api_product_user,api.product.user,model_api_product,stock.group_stock_user,1,1,1,1
+access_shipstation_selection_wizard,access.shipstation.selection.wizard,model_shipstation_selection_wizard,base.group_user,1,1,1,1
+access_shipstation_option,access.shipstation.option,model_shipstation_option,base.group_user,1,1,1,1
+access_inventory_admin_settings,access.inventory.admin.settings,model_inventory_admin_settings,base.group_system,1,1,1,1
+access_inventory_api_statistics_user,access.inventory.api.statistics.user,model_inventory_api_statistics,stock.group_stock_user,1,0,0,0
+access_inventory_api_statistics_manager,access.inventory.api.statistics.manager,model_inventory_api_statistics,stock.group_stock_manager,1,0,0,0
+access_inventory_api_statistics_system,access.inventory.api.statistics.system,model_inventory_api_statistics,base.group_system,1,1,1,1
+access_inventory_designer_user,access.inventory.designer.user,model_inventory_designer,stock.group_stock_user,1,1,1,1
+access_inventory_designer_manager,access.inventory.designer.manager,model_inventory_designer,stock.group_stock_manager,1,1,1,1
+access_inventory_designer_designer,access.inventory.designer.designer,model_inventory_designer,inventory_button.group_inventory_designer,1,0,0,0
+access_inventory_dashboard_user,access.inventory.dashboard.user,model_inventory_dashboard,stock.group_stock_user,1,1,1,1
+access_inventory_dashboard_manager,access.inventory.dashboard.manager,model_inventory_dashboard,stock.group_stock_manager,1,1,1,1

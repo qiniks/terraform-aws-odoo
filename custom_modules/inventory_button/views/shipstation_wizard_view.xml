@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_shipstation_selection_wizard_form" model="ir.ui.view">
+        <field name="name">shipstation.selection.wizard.form</field>
+        <field name="model">shipstation.selection.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Select Shipstations">
+                <sheet>
+                    <div class="d-flex justify-content-end mb-2">
+                        <button name="action_delete_selected" type="object" 
+                                string="Delete Selected" class="btn btn-sm btn-danger"
+                                confirm="Are you sure you want to delete the selected shipstations?"/>
+                    </div>
+                    <group>
+                        <field name="product_id" invisible="1"/>
+                        <field name="shipstation_ids" widget="many2many_checkboxes"/>
+                    </group>
+                    <group>
+                        <label for="new_shipstation" string="Add New Shipstation"/>
+                        <div class="d-flex align-items-center">
+                            <field name="new_shipstation" placeholder="Enter shipstation name..."/>
+                            <button name="create_shipstation" string="Add" type="object" 
+                                    class="btn btn-sm btn-primary ms-2"/>
+                        </div>
+                    </group>
+                    <footer>
+                        <button string="Confirm" name="action_confirm" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Shipstation Option List View -->
+    <record id="view_shipstation_option_tree" model="ir.ui.view">
+        <field name="name">shipstation.option.tree</field>
+        <field name="model">shipstation.option</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+            </tree>
+        </field>
+    </record>
+    
+    <!-- Shipstation Option Form View -->
+    <record id="view_shipstation_option_form" model="ir.ui.view">
+        <field name="name">shipstation.option.form</field>
+        <field name="model">shipstation.option</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

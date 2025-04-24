@@ -1,0 +1,15 @@
+/* custom_button.css */
+.view-designer-btn {
+  background: linear-gradient(to right, #00c6ff, #0072ff) !important;
+  color: white !important;
+  font-weight: bold !important;
+  border-radius: 25px !important;
+  padding: 10px 20px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  text-transform: uppercase;
+  transition: background 0.3s ease;
+}
+
+.view-designer-btn:hover {
+  background: linear-gradient(to right, #0072ff, #00c6ff) !important;
+}

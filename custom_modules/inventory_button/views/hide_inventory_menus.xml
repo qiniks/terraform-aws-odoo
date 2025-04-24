@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- =====================================
+         PRODUCTS SECTION
+         ===================================== -->
+    <!-- Main "Products" menu -->
+    <menuitem id="menu_stock_inventory_control" active="False"/>
+    
+    <!-- Child menu items under "Products" -->
+    <menuitem id="stock.menu_product_variant_config_stock" active="False"/>
+    <menuitem id="stock.product_product_menu" active="False"/>
+    <menuitem id="stock.menu_action_production_lot_form" active="False"/>
+
+    <!-- =====================================
+         OPERATIONS SECTION
+         ===================================== -->
+    <!-- Main "Operations" menus -->
+    <menuitem id="menu_stock_warehouse_mgmt" active="False"/>
+    <menuitem id="menu_stock_transfers" active="False"/>
+    <menuitem id="menu_stock_adjustments" active="False"/>
+    <menuitem id="menu_stock_procurement" active="False"/>
+    
+    <!-- Child menu items under "Operations" -->
+    <menuitem id="stock.menu_reordering_rules_replenish" active="False"/>
+    <menuitem id="stock.menu_action_inventory_tree" active="False"/>
+    <menuitem id="stock.menu_stock_scrap" active="False"/>
+    <menuitem id="stock.menu_procurement_compute" active="False"/>
+    <!-- Hide transfers inside operations -->
+    <menuitem id="stock.stock_picking_type_menu" active="False"/> 
+    <menuitem id="stock.menu_stock_picking_type_action" active="False"/>
+    <menuitem id="stock.stock_picking_menu" active="False"/>
+    <menuitem id="stock.all_picking" active="False"/>
+    
+    <!-- Hide Overview button -->
+    <menuitem id="stock.menu_dashboard" active="False"/>
+
+    <!-- =====================================
+         CONFIGURATION SECTION
+         ===================================== -->
+    <!-- Main "Configuration" menu -->
+    <menuitem id="menu_stock_config_settings" active="False"/>
+    
+    <!-- Child menu items under "Configuration" -->
+    <menuitem id="stock.menu_stock_general_settings" active="False"/>
+    <menuitem id="stock.menu_pickingtype" active="False"/>
+    <menuitem id="stock.menu_product_category_config_stock" active="False"/>
+    <menuitem id="stock.menu_attribute_action" active="False"/>
+    <menuitem id="stock.menu_reordering_rules_config" active="False"/>
+    <menuitem id="stock.menu_wms_barcode_nomenclature_all" active="False"/>
+    <menuitem id="inventory_button.menu_shipstation_options" active="False"/>
+    <menuitem id="stock.menu_action_warehouse_form" active="False"/>
+
+    <!-- =====================================
+         REPORTING SECTION
+         ===================================== -->
+    <!-- Reporting menu -->
+    <menuitem id="stock.menu_warehouse_report" active="False"/>
+</odoo>

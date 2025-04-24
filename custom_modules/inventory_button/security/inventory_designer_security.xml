@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Designer Security Group -->
+    <record id="group_inventory_designer" model="res.groups">
+        <field name="name">Designer</field>
+        <field name="category_id" ref="base.module_category_inventory_inventory"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Users with this role can access assigned design jobs</field>
+    </record>
+
+    <!-- Record Rule: Designers can only see their own records -->
+    <record id="inventory_designer_personal_rule" model="ir.rule">
+        <field name="name">Designer: Personal Records Only</field>
+        <field name="model_id" ref="model_inventory_designer"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('inventory_button.group_inventory_designer'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- API Products Rule: Designers can only see their assigned products -->
+    <record id="api_product_designer_rule" model="ir.rule">
+        <field name="name">Designer: Only See Assigned Products</field>
+        <field name="model_id" ref="model_api_product"/>
+        <field name="domain_force">['|', ('designer_id.user_id', '=', user.id), ('designer_id', '=', False)]</field>
+        <field name="groups" eval="[(4, ref('inventory_button.group_inventory_designer'))]"/>
+    </record>
+
+    <!-- Stock managers can see all designers -->
+    <record id="inventory_designer_stock_manager_rule" model="ir.rule">
+        <field name="name">Stock Manager: All Designers</field>
+        <field name="model_id" ref="model_inventory_designer"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_manager'))]"/>
+    </record>
+</odoo>

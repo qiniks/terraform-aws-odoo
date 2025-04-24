@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_api_product_tree" model="ir.ui.view">
+        <field name="name">api.product.tree</field>
+        <field name="model">api.product</field>
+        <field name="arch" type="xml">
+            <tree default_order="date">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="design"/>
+                <field name="fast_ship"/>
+                <field name="quantity"/>
+                <field name="email"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

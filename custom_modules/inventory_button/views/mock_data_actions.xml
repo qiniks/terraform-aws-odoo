@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action for generating mock data -->
+    <record id="action_generate_mock_assignment_data" model="ir.actions.server">
+        <field name="name">Generate Mock Assignment Data</field>
+        <field name="model_id" ref="model_api_product"/>
+        <field name="binding_model_id" ref="model_api_product"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = model.generate_mock_assignment_data()
+        </field>
+    </record>
+
+    <!-- Menu entry moved to menu_structure.xml -->
+</odoo>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_api_product_form" model="ir.ui.view">
+        <field name="name">api.product.form</field>
+        <field name="model">api.product</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" options="{'clickable': '1'}" 
+                           statusbar_visible="all_products,processing,approving,done"/>
+                    <button name="toggle_manual_urgent" type="object" 
+                            string="Mark as Urgent" class="btn btn-sm btn-outline-danger"
+                            attrs="{'invisible': [('manual_urgent', '=', True)]}"/>
+                    <button name="toggle_manual_urgent" type="object" 
+                            string="Remove Urgent" class="btn btn-sm btn-outline-secondary" 
+                            attrs="{'invisible': [('manual_urgent', '=', False)]}"/>
+                    <span class="ms-2"/>
+                    <button name="assign_to_me" type="object" 
+                            string="Assign to Me" class="btn btn-sm btn-primary"
+                            attrs="{'invisible': [('user_id', '!=', False)]}"/>
+                    <button name="remove_assignment" type="object" 
+                            string="Unassign" class="btn btn-sm btn-danger"
+                            attrs="{'invisible': [('user_id', '=', False)]}"/>
+                </header>
+                <sheet>
+
+                    <!-- Status indicators -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="dummy_action" type="object" class="oe_stat_button" icon="fa-exclamation-circle" attrs="{'invisible': [('manual_urgent', '=', False)]}">
+                            <div class="o_stat_info text-danger">
+                                <span class="o_stat_value">URGENT</span>
+                            </div>
+                        </button>
+                        <button name="dummy_action" type="object" class="oe_stat_button" icon="fa-bolt" attrs="{'invisible': [('fast_ship', '=', False)]}">
+                            <div class="o_stat_info text-warning">
+                                <span class="o_stat_value">Fast Ship</span>
+                            </div>
+                        </button>
+                        <button name="dummy_action" type="object" class="oe_stat_button" icon="fa-pencil" attrs="{'invisible': [('customer_notes', '=', False)]}">
+                            <div class="o_stat_info text-primary">
+                                <span class="o_stat_value">Custom Design</span>
+                            </div>
+                        </button>
+                        <button name="dummy_action" type="object" class="oe_stat_button" icon="fa-truck" attrs="{'invisible': [('order_id', '=', False)]}">
+                            <div class="o_stat_info text-success">
+                                <span class="o_stat_value">ShipStation</span>
+                            </div>
+                        </button>
+                        <button name="mark_read" type="object" class="oe_stat_button" icon="fa-envelope-open" attrs="{'invisible': [('unread_messages', '=', False)]}">
+                            <div class="o_stat_info text-info">
+                                <span class="o_stat_value">Mark Read</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Title area -->
+                    <div class="oe_title">
+                        <h1 class="d-flex align-items-center">
+                            <field name="name" placeholder="Product Name" class="me-2"/>
+                        </h1>
+                        <h3 attrs="{'invisible': [('product_name', '=', False)]}" class="text-muted">
+                            <field name="product_name" placeholder="Product Name"/>
+                        </h3>
+                    </div>
+
+                    <!-- ShipStation Order Information -->
+                    <div class="mb-3" attrs="{'invisible': [('order_id', '=', False)]}">
+                        <div class="alert alert-success d-flex align-items-center">
+                            <div><i class="fa fa-shopping-cart fa-2x me-2"></i></div>
+                            <div>
+                                <strong>ShipStation Order: </strong>
+                                <field name="order_number" readonly="1" class="oe_inline"/>
+                                <span class="mx-2">|</span>
+                                <strong>Status: </strong>
+                                <field name="order_status" readonly="1" class="oe_inline"/>
+                                <span class="mx-2">|</span>
+                                <strong>Ship By: </strong>
+                                <field name="ship_by_date" readonly="1" class="oe_inline" options="{'date_only': True}"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Designer assignment -->
+                    <div class="mb-3" attrs="{'invisible': [('user_id', '=', False)]}">
+                        <div class="alert alert-info d-flex align-items-center justify-content-between w-100">
+                            <div class="d-flex align-items-center">
+                                <span class="me-2"><strong>Assigned Designer:</strong></span>
+                                <field name="user_id" readonly="1" widget="many2one_avatar_user"
+                                    options="{'no_open': false, 'no_quick_create': true, 'no_create': true}" 
+                                    context="{'form_view_ref': 'base.view_users_form'}"
+                                    can_create="false" can_write="false"/>
+                            </div>
+                            <div>
+                                <button name="action_open_designer" type="object" 
+                                        string="View Designer" class="btn btn-sm btn-link ms-2" 
+                                        icon="fa-arrow-right"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ShipStation Ready to Ship -->
+                    <div class="mb-3" attrs="{'invisible': [('state', '!=', 'done')]}">
+                        <div class="alert alert-primary d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-paper-plane fa-lg me-2"></i>
+                                <strong>Ready to ship:</strong>
+                            </div>
+                            <button name="open_shipstation_selection" type="object" 
+                                    string="Send to ShipStation" class="btn btn-primary"
+                                    icon="fa-external-link"/>
+                        </div>
+                    </div>
+
+                    <!-- Editable for Admins -->
+                    <group groups="base.group_system">
+                        <group string="Order Information">
+                            <field name="order_date"/>
+                            <field name="quantity"/>
+                            <field name="delivery_date" decoration-bf="quantity > 1"/>
+                            <field name="shipping_service" attrs="{'invisible': [('shipping_service', '=', False)]}"/>
+                            <field name="customer_email"/>
+                            <field name="design_price"/>
+                            <field name="order_total"/>
+                            <field name="shipping_amount" widget="monetary"/>
+                            <!-- Hidden fields -->
+                            <field name="priority" invisible="1"/>
+                            <field name="manual_urgent" invisible="1"/>
+                            <field name="fast_ship" invisible="1"/>
+                            <field name="order_id" invisible="1"/>
+                            <field name="item_details" invisible="1"/>
+                            <field name="unread_messages" invisible="1"/>
+
+                        </group>
+                        <group string="Product Information">
+                            <field name="sku"/>
+                            <field name="design_difficulty" widget="priority"/>
+                            <field name="customer_notes" widget="text"/>
+                        </group>
+                    </group>
+
+                    <!-- Readonly for Non-Admins -->
+                    <group groups="!base.group_system">
+                        <group string="Order Information">
+                            <field name="order_date" attrs="{'readonly': True, 'decoration-none': True}" class="field-label-black"/>
+                            <field name="quantity" attrs="{'readonly': True, 'decoration-none': True}" class="field-label-black"/>
+                            <field name="delivery_date" attrs="{'readonly': True, 'decoration-none': True}" decoration-bf="quantity > 1" class="field-label-black"/>
+                            <field name="shipping_service" attrs="{'readonly': True, 'invisible': [('shipping_service', '=', False)], 'decoration-none': True}" class="field-label-black"/>
+                            <field name="customer_email" attrs="{'readonly': True, 'decoration-none': True}" class="field-label-black"/>
+                            <field name="design_price" attrs="{'readonly': True, 'decoration-none': True}" class="field-label-black"/>
+                        </group>
+                        <group string="Product Information">
+                            <field name="sku" attrs="{'readonly': True, 'decoration-none': True}" class="field-label-black"/>
+                            <field name="design_difficulty" widget="priority" attrs="{'readonly': True, 'decoration-none': True}" class="field-label-black"/>
+                            <field name="customer_notes" widget="text" attrs="{'readonly': True, 'decoration-none': True}" class="field-label-black"/>
+                        </group>
+                    </group>
+                    
+
+                    <!-- Hidden Fields (same for all) -->
+                    <field name="order_total" invisible="1"/>
+                    <field name="priority" invisible="1"/>
+                    <field name="manual_urgent" invisible="1"/>
+                    <field name="fast_ship" invisible="1"/>
+                    <field name="order_id" invisible="1"/>
+                    <field name="item_details" invisible="1"/>
+                    <field name="unread_messages" invisible="1"/>
+
+                    <notebook>
+                        <page string="Order Items" name="order_items" attrs="{'invisible': [('item_details', '=', False)]}">
+                            <field name="parsed_items" widget="html"/>
+                        </page>
+
+                        <page string="Product Resources" name="additional_info">
+                            <group>
+                                <group string="Product image">
+                                    <field name="image_url" widget="url" placeholder="Preview Image URL" attrs="{'readonly': True}"/>
+                                </group>
+                            </group>
+                        </page>
+                        <!-- <page string="Designer's Assignments" name="designer_assignments" 
+                              attrs="{'invisible': [('user_id', '=', False)]}">
+                            <field name="designer_assigned_products" readonly="1">
+                                <tree decoration-danger="manual_urgent == True" decoration-warning="design_difficulty > 2">
+                                    <field name="name"/>
+                                    <field name="order_date"/>
+                                    <field name="state"/>
+                                    <field name="delivery_date"/>
+                                    <field name="design_difficulty" widget="priority"/>
+                                    <field name="manual_urgent" widget="boolean_toggle"/>
+                                </tree>
+                            </field>
+                        </page> -->
+                    </notebook>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+</odoo>

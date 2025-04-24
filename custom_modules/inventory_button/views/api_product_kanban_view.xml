@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_api_product_kanban" model="ir.ui.view">
+        <field name="name">api.product.kanban</field>
+        <field name="model">api.product</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" 
+                    quick_create="false"
+                    class="o_kanban_grouped" 
+                    records_draggable="true"
+                    on_create="quick_create"
+                    examples="1"
+                    groups_draggable="true"
+                    groups_limit="5"
+                    default_order="user_unread_priority desc, priority desc, design_difficulty desc, order_date desc">
+                <field name="api_id"/>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="design"/>
+                <field name="fast_ship"/>
+                <field name="quantity"/>
+                <field name="email"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="manual_urgent"/>
+                <field name="user_id"/>
+                <field name="order_id"/>
+                <field name="order_number"/>
+                <field name="order_status"/>
+                <field name="ship_by_date"/>
+                <field name="product_name"/>
+                <field name="sku"/>
+                <field name="shipping_service"/>
+                <field name="customer_email"/>
+                <field name="unread_messages"/>
+                <field name="design_price"/>
+                <progressbar field="state" colors='{"all_products": "success", "processing": "info", "approving": "warning", "done": "muted"}'/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click oe_kanban_card d-flex flex-column justify-content-between h-100">
+                             <!-- Top row with title only -->
+                            <div class="mb-2">
+                                <strong class="o_kanban_record_title">
+                                    <t t-if="record.sku.raw_value">
+                                        <field name="sku"/> : <t t-esc="record.order_number.raw_value"/> <field name="design_price_display"/>
+                                    </t>
+                                </strong>
+                            </div>
+
+                            <!-- ShipStation order info -->
+                            <div t-if="record.order_id.raw_value" class="mb-2 text-muted">
+                                <small>
+                                    <i class="fa fa-shopping-cart me-1"></i> Order: <field name="order_number"/>
+                                    <span t-if="record.order_status.raw_value"> | <field name="order_status"/></span>
+                                </small>
+                            </div>
+
+                            <!-- Tags section -->
+                            <div class="o_kanban_tags_section mb-2">
+                                <span t-if="record.manual_urgent.raw_value" class="badge rounded-pill text-bg-danger me-1">
+                                    <i class="fa fa-exclamation-circle me-1"></i><strong>Urgent</strong>
+                                </span>
+                                <span t-if="record.fast_ship.raw_value" class="badge rounded-pill text-bg-info me-1">
+                                    <i class="fa fa-bolt me-1"></i><strong>Fast</strong>
+                                </span>
+                                <span t-if="record.quantity.raw_value > 10" class="badge rounded-pill text-bg-warning me-1">
+                                    <i class="fa fa-cubes me-1"></i><strong>Bulk Order</strong>
+                                </span>
+                                <span t-if="record.design.raw_value" class="badge rounded-pill text-bg-primary me-1">
+                                    <i class="fa fa-paint-brush me-1"></i><strong>Custom</strong>
+                                </span>
+                                <!-- Only show unread messages tag if the product is assigned to the current user -->
+                                <span t-if="record.unread_messages.raw_value and record.user_id.raw_value == env.uid" class="badge rounded-pill text-bg-secondary me-1">
+                                    <i class="fa fa-comment-dots me-1"></i><strong>Messages</strong>
+                                </span>
+                            </div>
+
+                            <!-- Main content with info -->
+                            <div class="row mb-2">
+                                <div class="col-12">
+                                    
+                                    <!-- Flex container to ensure they stay on the same line -->
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <ul class="ps-0" style="list-style-type: none; display: inline-block;">
+                                                <field name="design_difficulty" widget="priority"/>
+                                                <li>Date: <field name="order_date" options="{'date_only':True}" /></li>
+                                                <li>Ship By: <field name="ship_by_date" options="{'date_only': True}"/></li>
+                                                <li>Quantity: <field name="quantity"/></li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Take Order button, aligned to the right -->
+                                        <t t-if="!record.user_id.raw_value">
+                                            <div class="mt-auto">
+                                                <button name="assign_to_me" type="object" class="btn btn-sm btn-primary">
+                                                    <i class="fa fa-user-plus me-1"></i> Take Order
+                                                </button>
+                                            </div>
+                                        </t>
+
+                                        <!-- Avatar at the same level as 'Take Order' button -->
+                                        <t t-if="record.user_id.raw_value">
+                                            <div class="mt-auto">
+                                                <field name="user_id" widget="many2one_avatar_user" 
+                                                       options="{'display_avatar_name': false, 'no_quick_create': true, 'no_create': true}"
+                                                       context="{'form_view_ref': 'base.view_users_form'}"
+                                                       can_create="false" can_write="false"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+</odoo>

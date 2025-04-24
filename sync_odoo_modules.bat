@@ -4,9 +4,9 @@ setlocal enabledelayedexpansion
 :: Configuration
 set CLUSTER_NAME=odoo
 set SERVICE_NAME=odoo
-set DATASYNC_TASK_ARN=arn:aws:datasync:us-east-1:021776651623:task/task-0251c07909125fbda
+set DATASYNC_TASK_ARN=arn:aws:datasync:us-east-1:021776651623:task/task-0c1406bd155b1aaf7
 set S3_BUCKET=odoo-odoo-custom-121312
-set CLOUDFRONT_DOMAIN=d27lnhk6onbdt0.cloudfront.net
+set CLOUDFRONT_DOMAIN=dodm7d5gantcd.cloudfront.net
 set ODOO_DB=odoo
 
 :: Check if a module name was provided

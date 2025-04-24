@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_api_product_search" model="ir.ui.view">
+        <field name="name">api.product.search</field>
+        <field name="model">api.product</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="api_id"/>
+                <field name="design"/>
+                <field name="email"/>
+                <filter string="Fast Ship" name="fast_ship" domain="[('fast_ship', '=', True)]"/>
+                
+                <!-- Tags filters -->
+                <separator/>
+                <filter string="Urgent" name="tag_urgent" domain="[('fast_ship', '=', True)]"/>
+                <filter string="Bulk Order" name="tag_bulk" domain="[('quantity', '>', 10)]"/>
+                <filter string="Custom" name="tag_custom" domain="[('design', '!=', False), ('design', '!=', '')]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Design" name="groupby_design" context="{'group_by': 'design'}"/>
+                    <filter string="Date" name="groupby_date" context="{'group_by': 'date'}"/>
+                    <filter string="Fast Ship" name="groupby_fast_ship" context="{'group_by': 'fast_ship'}"/>
+                    <filter string="Status" name="groupby_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

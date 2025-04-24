@@ -1,182 +1,475 @@
-[
+#order 1 with priority shipping
+{
+        "orderId": 561315687,
+        "orderNumber": "3655998951",
+        "orderKey": "3655998951",
+        "orderDate": "2025-04-12T22:25:02.0000000",
+        "createDate": "2025-04-12T23:27:30.6800000",
+        "modifyDate": "2025-04-14T14:35:09.8930000",
+        "paymentDate": "2025-04-12T22:25:08.0000000",
+        "shipByDate": "2025-04-14T09:00:00.0000000",
+        "orderStatus": "shipped",
+        "customerId": 219168971,
+        "customerUsername": "34816658",
+        "customerEmail": "andrew@alinke.com",
+        "billTo": {
+            "name": "Andrew Linke",
+            "company": null,
+            "street1": "4235 Bark Hill Road",
+            "street2": "",
+            "street3": null,
+            "city": "Union Bridge",
+            "state": "MD",
+            "postalCode": "21791",
+            "country": "US",
+            "phone": null,
+            "residential": null,
+            "addressVerified": null
+        },
+        "shipTo": {
+            "name": "Andrew Linke",
+            "company": null,
+            "street1": "4235 Bark Hill Road",
+            "street2": "",
+            "street3": null,
+            "city": "Union Bridge",
+            "state": "MD",
+            "postalCode": "21791",
+            "country": "US",
+            "phone": null,
+            "residential": false,
+            "addressVerified": "Address not yet validated"
+        },
+        "items": [
+            {
+                "orderItemId": 956023303,
+                "lineItemKey": "Discount",
+                "sku": "",
+                "name": "Discount",
+                "imageUrl": null,
+                "weight": null,
+                "quantity": 1,
+                "unitPrice": -34.95,
+                "taxAmount": null,
+                "shippingAmount": null,
+                "warehouseLocation": null,
+                "options": [],
+                "productId": null,
+                "fulfillmentSku": null,
+                "adjustment": true,
+                "upc": null,
+                "createDate": "2025-04-12T23:27:30.65",
+                "modifyDate": "2025-04-12T23:27:30.65"
+            },
+            {
+                "orderItemId": 956023302,
+                "lineItemKey": "4556441099",
+                "sku": "BS1025-Gld18",
+                "name": "Gold Love Knot, Dainty Silver Knot necklace, Double Chain Knot, Minimalist everyday necklace, Endless Knot choker, gift for her mother aunt",
+                "imageUrl": "https://i.etsystatic.com/38067550/r/il/952a2b/5270590792/il_fullxfull.5270590792_n2oi.jpg",
+                "weight": {
+                    "value": 2.00,
+                    "units": "ounces",
+                    "WeightUnits": 1
+                },
+                "quantity": 1,
+                "unitPrice": 69.90,
+                "taxAmount": 0.00,
+                "shippingAmount": 0.00,
+                "warehouseLocation": null,
+                "options": [
+                    {
+                        "name": "Finish",
+                        "value": "Gold"
+                    },
+                    {
+                        "name": "Length",
+                        "value": "18 Inches"
+                    }
+                ],
+                "productId": 31463881,
+                "fulfillmentSku": null,
+                "adjustment": false,
+                "upc": null,
+                "createDate": "2025-04-12T23:27:30.65",
+                "modifyDate": "2025-04-12T23:27:30.65"
+            }
+        ],
+        "orderTotal": 46.95,
+        "amountPaid": 46.95,
+        "taxAmount": 2.10,
+        "shippingAmount": 9.90,
+        "customerNotes": null,
+        "internalNotes": null,
+        "gift": false,
+        "giftMessage": null,
+        "paymentMethod": "cc",
+        "requestedShippingService": "Priority Shipping",
+        "carrierCode": "stamps_com",
+        "serviceCode": "usps_priority_mail",
+        "packageCode": "package",
+        "confirmation": "delivery",
+        "shipDate": "2025-04-14",
+        "holdUntilDate": null,
+        "weight": {
+            "value": 4.00,
+            "units": "ounces",
+            "WeightUnits": 1
+        },
+        "dimensions": null,
+        "insuranceOptions": {
+            "provider": null,
+            "insureShipment": false,
+            "insuredValue": 0.0
+        },
+        "internationalOptions": {
+            "contents": null,
+            "customsItems": null,
+            "nonDelivery": null
+        },
+        "advancedOptions": {
+            "warehouseId": 512865,
+            "nonMachinable": false,
+            "saturdayDelivery": false,
+            "containsAlcohol": false,
+            "mergedOrSplit": false,
+            "mergedIds": [],
+            "parentId": null,
+            "storeId": 544729,
+            "customField1": "",
+            "customField2": "",
+            "customField3": "",
+            "source": "etsy",
+            "billToParty": null,
+            "billToAccount": null,
+            "billToPostalCode": null,
+            "billToCountryCode": null,
+            "billToMyOtherAccount": 697346
+        },
+        "tagIds": [
+            75399
+        ],
+        "userId": null,
+        "externallyFulfilled": false,
+        "externallyFulfilledBy": null,
+        "externallyFulfilledById": null,
+        "externallyFulfilledByName": null,
+        "labelMessages": null
+}
+    #order 2
+{
+        "orderId": 563858360,
+        "orderNumber": "3660838797",
+        "orderKey": "3660838797",
+        "orderDate": "2025-04-17T23:26:53.0000000",
+        "createDate": "2025-04-18T00:18:10.8070000",
+        "modifyDate": "2025-04-18T00:18:12.3800000",
+        "paymentDate": "2025-04-17T23:27:05.0000000",
+        "shipByDate": "2025-04-21T23:59:00.0000000",
+        "orderStatus": "awaiting_shipment",
+        "customerId": 274525017,
+        "customerUsername": "53949381",
+        "customerEmail": "dbooth16@columbus.rr.com",
+        "billTo": {
+            "name": "Vicki L. Booth",
+            "company": null,
+            "street1": "287 Residence Drive",
+            "street2": "",
+            "street3": null,
+            "city": "Marysville",
+            "state": "OH",
+            "postalCode": "43040",
+            "country": "US",
+            "phone": null,
+            "residential": null,
+            "addressVerified": null
+        },
+        "shipTo": {
+            "name": "Vicki L. Booth",
+            "company": null,
+            "street1": "287 RESIDENCE DR",
+            "street2": "",
+            "street3": null,
+            "city": "MARYSVILLE",
+            "state": "OH",
+            "postalCode": "43040-8629",
+            "country": "US",
+            "phone": null,
+            "residential": true,
+            "addressVerified": "Address validated successfully"
+        },
+        "items": [
+            {
+                "orderItemId": 961256818,
+                "lineItemKey": "4548600352",
+                "sku": "BS1002-RSG2",
+                "name": "Silver, 14K Gold Plated Extender Chain, Gold extender chain, Silver Extender Chain, Rose Gold Extender Chain, Necklace Extender Chain",
+                "imageUrl": "https://i.etsystatic.com/38067550/r/il/8abf91/4920859935/il_fullxfull.4920859935_1do2.jpg",
+                "weight": {
+                    "value": 1.00,
+                    "units": "ounces",
+                    "WeightUnits": 1
+                },
+                "quantity": 1,
+                "unitPrice": 21.90,
+                "taxAmount": 0.00,
+                "shippingAmount": 0.00,
+                "warehouseLocation": null,
+                "options": [
+                    {
+                        "name": "Finish",
+                        "value": "Rose Gold"
+                    },
+                    {
+                        "name": "Extender length",
+                        "value": "2 inch"
+                    }
+                ],
+                "productId": 30938213,
+                "fulfillmentSku": null,
+                "adjustment": false,
+                "upc": null,
+                "createDate": "2025-04-18T00:18:10.76",
+                "modifyDate": "2025-04-18T00:18:10.76"
+            },
+            {
+                "orderItemId": 961256819,
+                "lineItemKey": "Discount",
+                "sku": "",
+                "name": "Discount",
+                "imageUrl": null,
+                "weight": null,
+                "quantity": 1,
+                "unitPrice": -10.95,
+                "taxAmount": null,
+                "shippingAmount": null,
+                "warehouseLocation": null,
+                "options": [],
+                "productId": null,
+                "fulfillmentSku": null,
+                "adjustment": true,
+                "upc": null,
+                "createDate": "2025-04-18T00:18:10.76",
+                "modifyDate": "2025-04-18T00:18:10.76"
+            }
+        ],
+        "orderTotal": 11.72,
+        "amountPaid": 11.72,
+        "taxAmount": 0.77,
+        "shippingAmount": 0.00,
+        "customerNotes": null,
+        "internalNotes": null,
+        "gift": false,
+        "giftMessage": null,
+        "paymentMethod": "cc",
+        "requestedShippingService": "Standard Shipping",
+        "carrierCode": "stamps_com",
+        "serviceCode": "usps_first_class_mail",
+        "packageCode": "letter",
+        "confirmation": "delivery",
+        "shipDate": null,
+        "holdUntilDate": null,
+        "weight": {
+            "value": 1.00,
+            "units": "ounces",
+            "WeightUnits": 1
+        },
+        "dimensions": null,
+        "insuranceOptions": {
+            "provider": null,
+            "insureShipment": false,
+            "insuredValue": 0.0
+        },
+        "internationalOptions": {
+            "contents": null,
+            "customsItems": null,
+            "nonDelivery": null
+        },
+        "advancedOptions": {
+            "warehouseId": 512865,
+            "nonMachinable": false,
+            "saturdayDelivery": false,
+            "containsAlcohol": false,
+            "mergedOrSplit": false,
+            "mergedIds": [],
+            "parentId": null,
+            "storeId": 544729,
+            "customField1": "",
+            "customField2": "",
+            "customField3": "",
+            "source": "etsy",
+            "billToParty": null,
+            "billToAccount": null,
+            "billToPostalCode": null,
+            "billToCountryCode": null,
+            "billToMyOtherAccount": 697346
+        },
+        "tagIds": [
+            75399
+        ],
+        "userId": null,
+        "externallyFulfilled": false,
+        "externallyFulfilledBy": null,
+        "externallyFulfilledById": null,
+        "externallyFulfilledByName": null,
+        "labelMessages": null
+}
+    #order 3
     {
-            "id": 1,
-            "name": "T-Shirt",
-            "date": "2025-03-01",
-            "design": "Modern"
-    },
-    {
-            "id": 2,
-            "name": "Shirt",
-            "date": "2025-03-02",
-            "design": "Classic"
-    },
-    {
-            "id": 3,
-            "name": "T-Shirt",
-            "date": "2025-03-03",
-            "design": "Minimal"
-    },
-    {
-            "id": 4,
-            "name": "Shirt",
-            "date": "2025-03-04",
-            "design": "Vintage"
-    },
-    {
-            "id": 5,
-            "name": "T-Shirt",
-            "date": "2025-03-05",
-            "design": "Abstract"
-    },
-    {
-            "id": 6,
-            "name": "Shirt",
-            "date": "2025-03-06",
-            "design": "Geometric"
-    },
-    {
-            "id": 7,
-            "name": "T-Shirt",
-            "date": "2025-03-07",
-            "design": "Floral"
-    },
-    {
-            "id": 8,
-            "name": "Shirt",
-            "date": "2025-03-08",
-            "design": "Industrial"
-    },
-    {
-            "id": 9,
-            "name": "T-Shirt",
-            "date": "2025-03-09",
-            "design": "Scandinavian"
-    },
-    {
-            "id": 10,
-            "name": "Shirt",
-            "date": "2025-03-10",
-            "design": "Bohemian"
-    },
-    {
-            "id": 11,
-            "name": "T-Shirt",
-            "date": "2025-03-11",
-            "design": "Rustic"
-    },
-    {
-            "id": 12,
-            "name": "Shirt",
-            "date": "2025-03-12",
-            "design": "Contemporary"
-    },
-    {
-            "id": 13,
-            "name": "T-Shirt",
-            "date": "2025-03-13",
-            "design": "Eclectic"
-    },
-    {
-            "id": 14,
-            "name": "Shirt",
-            "date": "2025-03-14",
-            "design": "Art Deco"
-    },
-    {
-            "id": 15,
-            "name": "T-Shirt",
-            "date": "2025-03-15",
-            "design": "Retro"
-    },
-    {
-            "id": 16,
-            "name": "Shirt",
-            "date": "2025-03-16",
-            "design": "Futuristic"
-    },
-    {
-            "id": 17,
-            "name": "T-Shirt",
-            "date": "2025-03-17",
-            "design": "Baroque"
-    },
-    {
-            "id": 18,
-            "name": "Shirt",
-            "date": "2025-03-18",
-            "design": "Gothic"
-    },
-    {
-            "id": 19,
-            "name": "T-Shirt",
-            "date": "2025-03-19",
-            "design": "Tropical"
-    },
-    {
-            "id": 20,
-            "name": "Shirt",
-            "date": "2025-03-20",
-            "design": "Nautical"
-    },
-    {
-            "id": 21,
-            "name": "T-Shirt",
-            "date": "2025-03-21",
-            "design": "Urban"
-    },
-    {
-            "id": 22,
-            "name": "Shirt",
-            "date": "2025-03-22",
-            "design": "Traditional"
-    },
-    {
-            "id": 23,
-            "name": "T-Shirt",
-            "date": "2025-03-23",
-            "design": "Mid-Century"
-    },
-    {
-            "id": 24,
-            "name": "Shirt",
-            "date": "2025-03-24",
-            "design": "Pop Art"
-    },
-    {
-            "id": 25,
-            "name": "T-Shirt",
-            "date": "2025-03-25",
-            "design": "Country"
-    },
-    {
-            "id": 26,
-            "name": "Shirt",
-            "date": "2025-03-26",
-            "design": "Shabby Chic"
-    },
-    {
-            "id": 27,
-            "name": "T-Shirt",
-            "date": "2025-03-27",
-            "design": "Oriental"
-    },
-    {
-            "id": 28,
-            "name": "Shirt",
-            "date": "2025-03-28",
-            "design": "Mediterranean"
-    },
-    {
-            "id": 29,
-            "name": "T-Shirt",
-            "date": "2025-03-29",
-            "design": "Victorian"
-    },
-    {
-            "id": 30,
-            "name": "Shirt",
-            "date": "2025-03-30",
-            "design": "Zen"
+        "orderId": 563795605,
+        "orderNumber": "3660682111",
+        "orderKey": "3660682111",
+        "orderDate": "2025-04-17T18:00:03.0000000",
+        "createDate": "2025-04-17T18:51:35.5600000",
+        "modifyDate": "2025-04-17T18:51:36.9570000",
+        "paymentDate": "2025-04-17T18:00:14.0000000",
+        "shipByDate": "2025-04-21T23:59:00.0000000",
+        "orderStatus": "awaiting_shipment",
+        "customerId": 274494775,
+        "customerUsername": "969100122",
+        "customerEmail": "5bhw4x7m25@privaterelay.appleid.com",
+        "billTo": {
+            "name": "Alexis  Williams ",
+            "company": null,
+            "street1": "770 N Greenbrier Dr",
+            "street2": "",
+            "street3": null,
+            "city": "Orange",
+            "state": "CT",
+            "postalCode": "06477",
+            "country": "US",
+            "phone": null,
+            "residential": null,
+            "addressVerified": null
+        },
+        "shipTo": {
+            "name": "Alexis  Williams ",
+            "company": null,
+            "street1": "770 N GREENBRIER DR",
+            "street2": "",
+            "street3": null,
+            "city": "ORANGE",
+            "state": "CT",
+            "postalCode": "06477-2711",
+            "country": "US",
+            "phone": null,
+            "residential": true,
+            "addressVerified": "Address validated successfully"
+        },
+        "items": [
+            {
+                "orderItemId": 961145481,
+                "lineItemKey": "4548383176",
+                "sku": "BS1002-GLD4",
+                "name": "Silver, 14K Gold Plated Extender Chain, Gold extender chain, Silver Extender Chain, Rose Gold Extender Chain, Necklace Extender Chain",
+                "imageUrl": "https://i.etsystatic.com/38067550/r/il/8abf91/4920859935/il_fullxfull.4920859935_1do2.jpg",
+                "weight": {
+                    "value": 1.00,
+                    "units": "ounces",
+                    "WeightUnits": 1
+                },
+                "quantity": 1,
+                "unitPrice": 27.90,
+                "taxAmount": 0.00,
+                "shippingAmount": 0.00,
+                "warehouseLocation": null,
+                "options": [
+                    {
+                        "name": "Finish",
+                        "value": "Gold"
+                    },
+                    {
+                        "name": "Extender length",
+                        "value": "4 inch"
+                    }
+                ],
+                "productId": 30911876,
+                "fulfillmentSku": null,
+                "adjustment": false,
+                "upc": null,
+                "createDate": "2025-04-17T18:51:35.547",
+                "modifyDate": "2025-04-17T18:51:35.547"
+            },
+            {
+                "orderItemId": 961145482,
+                "lineItemKey": "Discount",
+                "sku": "",
+                "name": "Discount",
+                "imageUrl": null,
+                "weight": null,
+                "quantity": 1,
+                "unitPrice": -13.95,
+                "taxAmount": null,
+                "shippingAmount": null,
+                "warehouseLocation": null,
+                "options": [],
+                "productId": null,
+                "fulfillmentSku": null,
+                "adjustment": true,
+                "upc": null,
+                "createDate": "2025-04-17T18:51:35.547",
+                "modifyDate": "2025-04-17T18:51:35.547"
+            }
+        ],
+        "orderTotal": 14.84,
+        "amountPaid": 14.84,
+        "taxAmount": 0.89,
+        "shippingAmount": 0.00,
+        "customerNotes": null,
+        "internalNotes": null,
+        "gift": false,
+        "giftMessage": null,
+        "paymentMethod": "cc",
+        "requestedShippingService": "Standard Shipping",
+        "carrierCode": "stamps_com",
+        "serviceCode": "usps_first_class_mail",
+        "packageCode": "letter",
+        "confirmation": "delivery",
+        "shipDate": null,
+        "holdUntilDate": null,
+        "weight": {
+            "value": 1.00,
+            "units": "ounces",
+            "WeightUnits": 1
+        },
+        "dimensions": null,
+        "insuranceOptions": {
+            "provider": null,
+            "insureShipment": false,
+            "insuredValue": 0.0
+        },
+        "internationalOptions": {
+            "contents": null,
+            "customsItems": null,
+            "nonDelivery": null
+        },
+        "advancedOptions": {
+            "warehouseId": 512865,
+            "nonMachinable": false,
+            "saturdayDelivery": false,
+            "containsAlcohol": false,
+            "mergedOrSplit": false,
+            "mergedIds": [],
+            "parentId": null,
+            "storeId": 544729,
+            "customField1": "",
+            "customField2": "",
+            "customField3": "",
+            "source": "etsy",
+            "billToParty": null,
+            "billToAccount": null,
+            "billToPostalCode": null,
+            "billToCountryCode": null,
+            "billToMyOtherAccount": 697346
+        },
+        "tagIds": [
+            75399
+        ],
+        "userId": null,
+        "externallyFulfilled": false,
+        "externallyFulfilledBy": null,
+        "externallyFulfilledById": null,
+        "externallyFulfilledByName": null,
+        "labelMessages": null
     }
-]
+

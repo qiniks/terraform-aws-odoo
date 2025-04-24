@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action for generating mock designers -->
+    <record id="action_generate_mock_designers" model="ir.actions.server">
+        <field name="name">Generate Mock Designers</field>
+        <field name="model_id" ref="model_inventory_designer"/>
+        <field name="binding_model_id" ref="model_inventory_designer"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = model.generate_mock_designers(count=5)
+        </field>
+    </record>
+
+    <!-- Menu entry moved to menu_structure.xml -->
+</odoo>

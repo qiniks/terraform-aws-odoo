@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_res_users_designer_form" model="ir.ui.view">
+        <field name="name">res.users.designer.form</field>
+        <field name="model">res.users</field>
+        <field name="arch" type="xml">
+            <form string="Designer Profile">
+                <sheet>
+                    <!-- Add a relative positioning container to allow absolute positioning -->
+                    <div style="position: relative;">
+                        <div class="oe_title">
+                            <!-- Left-aligned user details -->
+                            <div>
+                                <h1><field name="name"/></h1>
+                                <div class="text-muted">
+                                    <field name="email" widget="email" style="width: 300px;"/>
+                                </div>
+                                <div>
+                                    <field name="phone" style="width: 300px;"/>
+                                </div>
+                            </div>
+                            <!-- Absolutely positioned image in the top-right corner -->
+                            <div style="position: absolute; top: 10px; right: 10px;">
+                                <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_1920'}" style="height: 128px; width: 128px;"/>
+                            </div>
+                        </div>
+                    </div>
+                    <group>
+                        <group string="Work Details">
+                            <field name="login"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Assignments">
+                            <field name="designer_assigned_products" readonly="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="state"/>
+                                    <field name="delivery_date"/>
+                                    <field name="design_difficulty"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
