@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View for Bulk Actions Wizard -->
+    <record id="view_bulk_actions_wizard_form" model="ir.ui.view">
+        <field name="name">bulk.actions.wizard.form</field>
+        <field name="model">bulk.actions.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Bulk Order Actions">
+                <sheet>
+                    <div class="alert alert-info mb-3" role="status">
+                        <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
+                        <field name="selected_order_count"/> orders selected for bulk action.
+                    </div>
+                    
+                    <div class="alert alert-warning mb-3" role="alert" attrs="{'invisible': [('show_shipstation_warning', '=', False)]}">
+                        <i class="fa fa-exclamation-triangle me-2" aria-hidden="true"></i>
+                        <strong>Warning:</strong> Some selected orders are not in "Done" status. Only orders in "Done" status will be sent to ShipStation.
+                    </div>
+                    
+                    <group>
+                        <field name="action_type" widget="radio" options="{'horizontal': true}"/>
+                        <field name="show_shipstation_warning" invisible="1"/>
+                        <field name="order_ids" widget="many2many_tags" invisible="1"/>
+                    </group>
+                    
+                    <div attrs="{'invisible': [('action_type', '!=', 'assign')]}">
+                        <h4 class="mb-3">Assign Orders to Producer</h4>
+                        <group>
+                            <field name="designer_id" string="Producer" options="{'no_create': True, 'no_open': False}" 
+                                   attrs="{'required': [('action_type', '=', 'assign')]}"
+                                   domain="[('active', '=', True)]"
+                                   context="{'form_view_ref': 'inventory_button.inventory_designer_form_view'}"/>
+                        </group>
+                    </div>
+                    
+                    <div attrs="{'invisible': [('action_type', '!=', 'shipstation')]}">
+                        <h4 class="mb-3">Send Orders to ShipStation</h4>
+                        <group>
+                            <field name="shipstation_ids" string="ShipStation Accounts"
+                                   widget="many2many_tags" options="{'no_create': True, 'color_field': 'color'}"
+                                   attrs="{'required': [('action_type', '=', 'shipstation')]}"
+                                   domain="[('active', '=', True)]"
+                                   context="{'form_view_ref': 'inventory_button.view_shipstation_option_form'}"/>
+                        </group>
+                        <div class="text-muted">
+                            <p>Orders will be sent to the selected ShipStation accounts. Only orders in "Done" status can be processed.</p>
+                        </div>
+                    </div>
+                </sheet>
+                <footer>
+                    <button string="Execute" name="execute_action" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Action for Bulk Actions from List View -->
+    <record id="action_bulk_actions_wizard" model="ir.actions.act_window">
+        <field name="name">Bulk Actions</field>
+        <field name="res_model">bulk.actions.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_api_product"/>
+        <field name="binding_view_types">list</field>
+    </record>
+</odoo>

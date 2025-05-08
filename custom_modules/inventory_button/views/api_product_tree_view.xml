@@ -4,14 +4,24 @@
         <field name="name">api.product.tree</field>
         <field name="model">api.product</field>
         <field name="arch" type="xml">
-            <tree default_order="date">
-                <field name="name"/>
-                <field name="date"/>
-                <field name="design"/>
-                <field name="fast_ship"/>
-                <field name="quantity"/>
-                <field name="email"/>
-                <field name="state"/>
+            <tree string="Orders" multi_edit="1" decoration-danger="manual_urgent == True" decoration-info="fast_ship == True" decoration-warning="quantity > 10">
+                <field name="order_number" string="Order Number"/>
+                <field name="store_name" string="Store"/>
+                <field name="sku" string="SKU"/>
+                <field name="quantity" sum="Total Units"/>
+                <field name="order_date" string="Order Date"/>
+                <field name="fast_ship" string="Fast Ship" widget="boolean_toggle"/>
+                <field name="manual_urgent" string="Urgent" widget="boolean_toggle"/>
+                <field name="designer_id" widget="many2one_avatar" string="Assigned Producer"/>
+                <field name="customer_email" string="Customer Email"/>
+                <field name="order_total" string="Order Total" widget="monetary"/>
+                <field name="state" string="Status"/>
+                <field name="order_id" invisible="1"/>
+                
+                <!-- Hidden fields for filtering/grouping -->
+                <field name="store_id" invisible="1"/>
+                <field name="order_status" invisible="1"/>
+                <field name="user_id" invisible="1"/>
             </tree>
         </field>
     </record>

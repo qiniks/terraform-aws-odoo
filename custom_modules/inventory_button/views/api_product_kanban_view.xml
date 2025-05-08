@@ -34,25 +34,40 @@
                 <field name="customer_email"/>
                 <field name="unread_messages"/>
                 <field name="design_price"/>
-                <progressbar field="state" colors='{"all_products": "success", "processing": "info", "approving": "warning", "done": "muted"}'/>
+                <field name="store_id"/>
+                <field name="store_name"/>
+                <field name="store_color"/>
+                <progressbar field="state" colors='{"all_orders": "success", "processing": "info", "approving": "warning", "done": "muted"}'/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div t-attf-class="oe_kanban_global_click oe_kanban_card d-flex flex-column justify-content-between h-100">
-                             <!-- Top row with title only -->
-                            <div class="mb-2">
-                                <strong class="o_kanban_record_title">
-                                    <t t-if="record.sku.raw_value">
-                                        <field name="sku"/> : <t t-esc="record.order_number.raw_value"/> <field name="design_price_display"/>
+                        <div t-attf-class="oe_kanban_global_click oe_kanban_card d-flex flex-column justify-content-between h-100" 
+                             t-attf-style=" border: 1px solid #{record.store_color.raw_value || '#CCCCCC'}; border-left: 5px solid #{record.store_color.raw_value || '#CCCCCC'};">
+                             <!-- Top row with store name only -->
+                            <div class="mb-1 d-flex justify-content-between">
+                                <strong class="o_kanban_record_title" style="font-size: 1.1em;">
+                                    <t t-if="record.store_name.raw_value">
+                                        <field name="store_name"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-if="record.store_id.raw_value">
+                                            Store ID: <field name="store_id"/>
+                                        </t>
                                     </t>
                                 </strong>
+                                <!-- Show ShipStation accounts when synced -->
+                                <div t-if="record.state.raw_value == 'synced_with_shipstation' and record.shipstation_ids.raw_value" class="text-end">
+                                    <small class="text-muted">
+                                        <field name="shipstation_ids" widget="many2many_tags" readonly="1" options="{'color_field': 'color', 'no_create': true}"/>
+                                    </small>
+                                </div>
                             </div>
 
-                            <!-- ShipStation order info -->
-                            <div t-if="record.order_id.raw_value" class="mb-2 text-muted">
-                                <small>
-                                    <i class="fa fa-shopping-cart me-1"></i> Order: <field name="order_number"/>
-                                    <span t-if="record.order_status.raw_value"> | <field name="order_status"/></span>
-                                </small>
+                            
+                            <!-- Second row with SKU and order number -->
+                            <div class="mb-2">
+                                <t t-if="record.sku.raw_value">
+                                    <span><field name="sku"/> : <span t-esc="record.order_number.raw_value"/></span>
+                                </t>
                             </div>
 
                             <!-- Tags section -->
@@ -66,9 +81,9 @@
                                 <span t-if="record.quantity.raw_value > 10" class="badge rounded-pill text-bg-warning me-1">
                                     <i class="fa fa-cubes me-1"></i><strong>Bulk Order</strong>
                                 </span>
-                                <span t-if="record.design.raw_value" class="badge rounded-pill text-bg-primary me-1">
+                                <!-- <span t-if="record.design.raw_value" class="badge rounded-pill text-bg-primary me-1">
                                     <i class="fa fa-paint-brush me-1"></i><strong>Custom</strong>
-                                </span>
+                                </span> -->
                                 <!-- Only show unread messages tag if the product is assigned to the current user -->
                                 <span t-if="record.unread_messages.raw_value and record.user_id.raw_value == env.uid" class="badge rounded-pill text-bg-secondary me-1">
                                     <i class="fa fa-comment-dots me-1"></i><strong>Messages</strong>
@@ -83,10 +98,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <ul class="ps-0" style="list-style-type: none; display: inline-block;">
-                                                <field name="design_difficulty" widget="priority"/>
-                                                <li>Date: <field name="order_date" options="{'date_only':True}" /></li>
-                                                <li>Ship By: <field name="ship_by_date" options="{'date_only': True}"/></li>
-                                                <li>Quantity: <field name="quantity"/></li>
+                                                <li>Order Date: <field name="order_date" options="{'date_only':True}" /></li>
                                             </ul>
                                         </div>
 
@@ -103,7 +115,7 @@
                                         <t t-if="record.user_id.raw_value">
                                             <div class="mt-auto">
                                                 <field name="user_id" widget="many2one_avatar_user" 
-                                                       options="{'display_avatar_name': false, 'no_quick_create': true, 'no_create': true}"
+                                                       options="{'display_avatar_name': true, 'no_quick_create': true, 'no_create': true}"
                                                        context="{'form_view_ref': 'base.view_users_form'}"
                                                        can_create="false" can_write="false"/>
                                             </div>

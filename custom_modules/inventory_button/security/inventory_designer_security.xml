@@ -20,11 +20,15 @@
         <field name="perm_unlink" eval="False"/>
     </record>
 
-    <!-- API Products Rule: Designers can only see their assigned products -->
+    <!-- API Products Rule: Designers can see their assigned products and unassigned products -->
     <record id="api_product_designer_rule" model="ir.rule">
-        <field name="name">Designer: Only See Assigned Products</field>
+        <field name="name">Designer: See Assigned and Unassigned Products</field>
         <field name="model_id" ref="model_api_product"/>
-        <field name="domain_force">['|', ('designer_id.user_id', '=', user.id), ('designer_id', '=', False)]</field>
+        <field name="domain_force">['|', '|', '|', 
+                                    ('designer_id.user_id', '=', user.id), 
+                                    ('designer_id', '=', False),
+                                    ('state', '=', 'all_orders'),
+                                    ('user_id', '=', user.id)]</field>
         <field name="groups" eval="[(4, ref('inventory_button.group_inventory_designer'))]"/>
     </record>
 
@@ -34,5 +38,17 @@
         <field name="model_id" ref="model_inventory_designer"/>
         <field name="domain_force">[(1, '=', 1)]</field>
         <field name="groups" eval="[(4, ref('stock.group_stock_manager'))]"/>
+    </record>
+
+    <!-- Global rule to ensure all users can see products in all states -->
+    <record id="api_product_global_view_rule" model="ir.rule">
+        <field name="name">Global: See All Orders by State</field>
+        <field name="model_id" ref="model_api_product"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
     </record>
 </odoo>

@@ -11,3 +11,6 @@ access_inventory_designer_manager,access.inventory.designer.manager,model_invent
 access_inventory_designer_designer,access.inventory.designer.designer,model_inventory_designer,inventory_button.group_inventory_designer,1,0,0,0
 access_inventory_dashboard_user,access.inventory.dashboard.user,model_inventory_dashboard,stock.group_stock_user,1,1,1,1
 access_inventory_dashboard_manager,access.inventory.dashboard.manager,model_inventory_dashboard,stock.group_stock_manager,1,1,1,1
+access_bulk_actions_wizard,access.bulk.actions.wizard,model_bulk_actions_wizard,stock.group_stock_user,1,1,1,1
+access_shipstation_option_user,access.shipstation.option.user,model_shipstation_option,stock.group_stock_user,1,0,0,0
+access_shipstation_option_manager,access.shipstation.option.manager,model_shipstation_option,stock.group_stock_manager,1,1,1,1

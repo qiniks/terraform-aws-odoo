@@ -1,24 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Action window definition for API Products -->
-    <record id="action_view_api_products" model="ir.actions.act_window">
-        <field name="name">API Products</field>
+    <!-- Action window definition for API Products (Kanban View) -->
+    <record id="action_view_api_orders" model="ir.actions.act_window">
+        <field name="name">Orders</field>
         <field name="res_model">api.product</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="context">{}</field> 
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No orders found
+            </p>
+            <p>
+                Orders will appear here once they are imported from integrated systems or manually created.
+            </p>
+        </field>
     </record>
     
-    <menuitem id="menu_api_products"
-            name="API Products"
+    <!-- Action window specifically for the bulk order management list view -->
+    <record id="action_view_api_orders_list" model="ir.actions.act_window">
+        <field name="name">Bulk Order Management</field>
+        <field name="res_model">api.product</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_api_product_tree"/>
+        <field name="context">{'search_default_state_done': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No orders found
+            </p>
+            <p>
+                This view allows you to select multiple orders for bulk processing.
+                You can assign orders to producers in bulk or send completed orders to ShipStation.
+            </p>
+        </field>
+    </record>
+    
+    <!-- Parent Orders Menu -->
+    <menuitem id="menu_api_orders_parent"
+            name="Orders"
             parent="stock.menu_stock_root"
-            action="action_view_api_products"
             sequence="16"/>
-
+    
+    <!-- Sub-menus for different order views -->
+    <menuitem id="menu_api_orders_kanban"
+            name="Kanban View" 
+            parent="menu_api_orders_parent"
+            action="action_view_api_orders"
+            sequence="10"/>
+            
+    <menuitem id="menu_api_orders_bulk"
+            name="List View"
+            parent="menu_api_orders_parent"
+            action="action_view_api_orders_list" 
+            sequence="20"/>
 
     <menuitem id="stock.menu_product_variant_config_stock"
     name="Products"
     parent="stock.menu_product_in_config_stock"
     active="False"/>
-
 
     <!-- Hide 'Reporting' menu item by setting active="False" -->
     <menuitem id="stock.menu_warehouse_report" name="Reporting" sequence="99" parent="stock.menu_stock_root" active="False"/>

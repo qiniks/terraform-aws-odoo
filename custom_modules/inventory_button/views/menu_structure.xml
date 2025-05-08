@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Admin Menu Parent - Created First -->
+    <menuitem id="menu_admin_parent"
+              name="Admin Panel"
+              parent="stock.menu_stock_root"
+              sequence="99"/>
+    
+    <!-- No action references here to avoid dependency issues -->
+</odoo>

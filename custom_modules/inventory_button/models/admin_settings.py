@@ -40,6 +40,18 @@ class AdminSettings(models.Model):
         string="API URL", default="https://ssapi.shipstation.com/orders"
     )
 
+    # Store information
+    store_ids_data = fields.Text(
+        string="Store IDs JSON",
+        help="JSON data containing ShipStation store IDs and names",
+    )
+
+    store_ids_display = fields.Html(
+        string="Available Stores",
+        compute="_compute_store_ids_display",
+        help="Displays all available store IDs from ShipStation",
+    )
+
     # Webhook fields
     webhook_url = fields.Char(
         string="Webhook Target URL",
@@ -676,3 +688,223 @@ class AdminSettings(models.Model):
                     "type": "danger",
                 },
             }
+
+    @api.depends("store_ids_data")
+    def _compute_store_ids_display(self):
+        """Parse the store_ids_data JSON and format it as HTML for display"""
+        for record in self:
+            html_content = "<table class='table table-sm table-striped'><thead><tr><th>Store ID</th><th>Store Name</th><th>Color</th></tr></thead><tbody>"
+
+            if record.store_ids_data:
+                try:
+                    stores = json.loads(record.store_ids_data)
+                    for store in stores:
+                        # Extract store details
+                        store_id = store.get("storeId", "")
+                        store_name = store.get("storeName", "")
+                        store_color = store.get("color", "#CCCCCC")
+
+                        # Add row to table
+                        html_content += f"<tr><td>{store_id}</td><td>{store_name}</td><td style='background-color:{store_color};'>{store_color}</td></tr>"
+                except Exception as e:
+                    html_content += (
+                        f"<tr><td colspan='3'>Error parsing stores: {str(e)}</td></tr>"
+                    )
+            else:
+                html_content += "<tr><td colspan='3'>No store information available. Use the 'Update Stores' button to fetch store data.</td></tr>"
+
+            html_content += "</tbody></table>"
+            record.store_ids_display = html_content
+
+    def fetch_store_information(self):
+        """Fetch store information from ShipStation API"""
+        self.ensure_one()
+
+        api_key, api_secret = self.get_api_credentials()
+        if not api_key or not api_secret:
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "API Error",
+                    "message": "API Key and Secret are required to fetch store information",
+                    "sticky": False,
+                    "type": "danger",
+                },
+            }
+
+        try:
+            # Create authorization string (API Key:API Secret) and encode it in Base64
+            auth_string = f"{api_key}:{api_secret}"
+            encoded_auth = base64.b64encode(auth_string.encode()).decode()
+
+            headers = {
+                "Authorization": f"Basic {encoded_auth}",
+                "Content-Type": "application/json",
+            }
+
+            _logger.info(
+                f"Fetching store information for source {self.source_identifier}"
+            )
+
+            # Fetch stores from ShipStation API
+            stores_url = "https://ssapi.shipstation.com/stores"
+            response = requests.get(stores_url, headers=headers, timeout=15)
+
+            if response.status_code == 200:
+                _logger.info(
+                    f"Successfully fetched store information for source {self.source_identifier}"
+                )
+
+                # Parse response to get store data
+                stores_data = response.json()
+
+                # Assign a color to each store based on its ID
+                for store in stores_data:
+                    # Generate a consistent color using the store ID
+                    store_id = store.get("storeId", 0)
+                    # Use hash of store_id to generate a hex color (avoiding too dark or too light colors)
+                    if store_id:
+                        # Create a hash based on the store_id
+                        hash_val = hash(str(store_id)) % 1000000
+                        # Convert to hex and ensure it's not too dark or too light
+                        # We'll use HSL model for better control of brightness
+                        hue = hash_val % 360  # 0-359 degrees on the color wheel
+                        # Fix saturation and lightness to ensure colors are vibrant but not too dark/light
+                        r, g, b = self._hsl_to_rgb(hue / 360.0, 0.65, 0.65)
+                        color = "#{:02x}{:02x}{:02x}".format(r, g, b)
+                        store["color"] = color
+                    else:
+                        store["color"] = "#CCCCCC"  # Default gray for unknown stores
+
+                # Store the raw JSON data
+                self.write(
+                    {
+                        "store_ids_data": json.dumps(stores_data),
+                        "last_updated": fields.Datetime.now(),
+                    }
+                )
+
+                # Count the number of stores fetched
+                stores_count = len(stores_data)
+
+                return {
+                    "type": "ir.actions.client",
+                    "tag": "display_notification",
+                    "params": {
+                        "title": "Store Information Updated",
+                        "message": f"Successfully fetched information for {stores_count} stores",
+                        "sticky": False,
+                        "type": "success",
+                    },
+                }
+            else:
+                error_message = f"Failed to fetch store information. API returned status code: {response.status_code}"
+                _logger.error(
+                    f"Store fetch failed for source {self.source_identifier}: {error_message}"
+                )
+
+                return {
+                    "type": "ir.actions.client",
+                    "tag": "display_notification",
+                    "params": {
+                        "title": "Store Fetch Failed",
+                        "message": error_message,
+                        "sticky": True,
+                        "type": "danger",
+                    },
+                }
+
+        except Exception as e:
+            error_message = f"Error fetching store information: {str(e)}"
+            _logger.error(
+                f"Exception during store fetch for source {self.source_identifier}: {error_message}"
+            )
+
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "Store Fetch Error",
+                    "message": error_message,
+                    "sticky": True,
+                    "type": "danger",
+                },
+            }
+
+    def _hsl_to_rgb(self, h, s, l):
+        """Convert HSL color values to RGB values (0-255)"""
+        if s == 0:
+            # achromatic (grey)
+            r = g = b = l
+        else:
+
+            def hue_to_rgb(p, q, t):
+                if t < 0:
+                    t += 1
+                if t > 1:
+                    t -= 1
+                if t < 1 / 6:
+                    return p + (q - p) * 6 * t
+                if t < 1 / 2:
+                    return q
+                if t < 2 / 3:
+                    return p + (q - p) * (2 / 3 - t) * 6
+                return p
+
+            q = l * (1 + s) if l < 0.5 else l + s - l * s
+            p = 2 * l - q
+            r = hue_to_rgb(p, q, h + 1 / 3)
+            g = hue_to_rgb(p, q, h)
+            b = hue_to_rgb(p, q, h - 1 / 3)
+
+        # Convert to 0-255 range
+        return int(r * 255), int(g * 255), int(b * 255)
+
+    def fetch_store_by_id(self, store_id):
+        """Fetch a specific store's information by ID"""
+        self.ensure_one()
+
+        if not store_id:
+            return None
+
+        api_key, api_secret = self.get_api_credentials()
+        if not api_key or not api_secret:
+            _logger.error(f"API Key and Secret are required to fetch store information")
+            return None
+
+        try:
+            # Create authorization string (API Key:API Secret) and encode it in Base64
+            auth_string = f"{api_key}:{api_secret}"
+            encoded_auth = base64.b64encode(auth_string.encode()).decode()
+
+            headers = {
+                "Authorization": f"Basic {encoded_auth}",
+                "Content-Type": "application/json",
+            }
+
+            _logger.info(
+                f"Fetching store {store_id} for source {self.source_identifier}"
+            )
+
+            # Fetch store from ShipStation API
+            store_url = f"https://ssapi.shipstation.com/stores/{store_id}"
+            response = requests.get(store_url, headers=headers, timeout=15)
+
+            if response.status_code == 200:
+                _logger.info(
+                    f"Successfully fetched store {store_id} for source {self.source_identifier}"
+                )
+                store_data = response.json()
+                return store_data
+            else:
+                _logger.error(
+                    f"Failed to fetch store {store_id}. API returned status code: {response.status_code}"
+                )
+                return None
+
+        except Exception as e:
+            _logger.error(
+                f"Exception during store fetch for store {store_id}: {str(e)}"
+            )
+            return None

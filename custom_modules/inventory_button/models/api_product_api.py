@@ -19,7 +19,7 @@ class ApiProduct(models.Model):
         string="API Source",
         readonly=True,
         index=True,
-        tracking=True,  
+        tracking=True,
         help="The API source this product was fetched from",
     )
     source_identifier = fields.Char(
@@ -32,40 +32,80 @@ class ApiProduct(models.Model):
 
     @api.depends("item_details")
     def _compute_parsed_items(self):
-        """Parse the item_details JSON and format it as HTML for display"""
+        """Parse the item_details JSON and format it as HTML for display with clickable images."""
         for record in self:
-            html_content = "<table class='table table-sm table-striped'><thead><tr><th>SKU</th><th>Name</th><th>Quantity</th><th>Unit Price</th><th>Options</th></tr></thead><tbody>"
+            html_content = """
+            <table class="table table-sm table-striped">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>SKU</th>
+                  <th>Name</th>
+                  <th>Quantity</th>
+                  <th>Unit Price</th>
+                  <th>Options</th>
+                </tr>
+              </thead>
+              <tbody>
+            """
 
             if record.item_details:
                 try:
                     items = json.loads(record.item_details)
                     for item in items:
-                        # Extract item details
                         sku = item.get("sku", "")
                         name = item.get("name", "")
                         quantity = item.get("quantity", 0)
                         unit_price = item.get("unitPrice", 0)
 
-                        # Format options
+                        # Clickable thumbnail
+                        image_url = item.get("imageUrl", "")
+                        if image_url:
+                            image_html = f"""
+                            <a href="{image_url}" target="_blank">
+                              <img
+                                src="{image_url}"
+                                alt="Product Image"
+                                style="max-width: 150px; max-height: 150px; object-fit: contain;"
+                                onerror='this.src="/inventory_button/static/img/placeholder.png";'
+                              />
+                            </a>
+                            """
+                        else:
+                            image_html = "No image"
+
+                        # Format options list
                         options_html = ""
                         if item.get("options"):
                             options_html = "<ul class='mb-0'>"
-                            for option in item.get("options", []):
-                                option_name = option.get("name", "")
-                                option_value = option.get("value", "")
-                                if option_name and option_value:
-                                    options_html += f"<li><strong>{option_name}:</strong> {option_value}</li>"
+                            for option in item["options"]:
+                                name_opt = option.get("name", "")
+                                value_opt = option.get("value", "")
+                                if name_opt and value_opt:
+                                    options_html += f"<li><strong>{name_opt}:</strong> {value_opt}</li>"
                             options_html += "</ul>"
 
-                        # Add row to table
-                        html_content += f"<tr><td>{sku}</td><td>{name}</td><td>{quantity}</td><td>${unit_price}</td><td>{options_html}</td></tr>"
+                        # Append row
+                        html_content += (
+                            "<tr>"
+                            f"<td>{image_html}</td>"
+                            f"<td>{sku}</td>"
+                            f"<td>{name}</td>"
+                            f"<td>{quantity}</td>"
+                            f"<td>${unit_price}</td>"
+                            f"<td>{options_html}</td>"
+                            "</tr>"
+                        )
                 except Exception as e:
+                    _logger.error(
+                        f"Error parsing item_details for record {record.id}: {e}"
+                    )
                     html_content += (
-                        f"<tr><td colspan='5'>Error parsing items: {str(e)}</td></tr>"
+                        f"<tr><td colspan='6'>Error parsing items: {e}</td></tr>"
                     )
             else:
                 html_content += (
-                    "<tr><td colspan='5'>No item details available</td></tr>"
+                    "<tr><td colspan='6'>No item details available</td></tr>"
                 )
 
             html_content += "</tbody></table>"
@@ -252,7 +292,7 @@ class ApiProduct(models.Model):
                     },
                 }
 
-            # Create authorization string (API Key:API Secret) and encode it in Base64
+            # Create authorization string (API Key:API Secret) and encode verlae it in Base64
             auth_string = f"{api_key}:{api_secret}"
             encoded_auth = base64.b64encode(auth_string.encode()).decode()
 
@@ -341,6 +381,9 @@ class ApiProduct(models.Model):
                 updated_count = 0
                 orders_processed = 0
 
+                # Dictionary to track unique store IDs
+                unique_store_ids = {}
+
                 # First, get all order numbers from the API response for efficient batch lookup
                 order_numbers = [
                     order.get("orderNumber")
@@ -373,6 +416,18 @@ class ApiProduct(models.Model):
                     order_number = order.get("orderNumber")
                     order_status = order.get("orderStatus", "")
 
+                    # Extract store_id from advancedOptions object
+                    advanced_options = order.get("advancedOptions", {})
+                    store_id = int(advanced_options["storeId"])
+
+                    # Track unique store IDs and their names
+                    if store_id and store_id not in unique_store_ids:
+                        store_name = order.get("storeName", "")
+                        unique_store_ids[store_id] = {
+                            "storeId": store_id,
+                            "storeName": store_name,
+                        }
+
                     # Check if this order already exists for this source
                     existing_product = existing_orders.get(order_number)
 
@@ -400,32 +455,29 @@ class ApiProduct(models.Model):
                     items_count = len(all_items)
                     _logger.info(f"Order {order_number} contains {items_count} items")
 
-                    # # Filter out discount items
-                    # items = [
-                    #     item
-                    #     for item in all_items
-                    #     if item.get("lineItemKey") != "Discount"
-                    # ]
-                    # if not items:
-                    #     _logger.info(
-                    #         f"Order {order_number} has no valid items after filtering discounts"
-                    #     )
-                    #     continue
-
-                    
-                    # Filter out discount items
-                    items = [
-                        item
-                        for item in all_items
-                    ]
+                    # Use all items without filtering out discounts
+                    items = all_items
                     if not items:
+                        _logger.info(f"Order {order_number} has no items")
+                        continue
+
+                    main_item = None
+                    for item in items:
+                        if item.get("lineItemKey") != "Discount":
+                            main_item = item
+                            break
+
+                    # If no non-discount items found, use the first item
+                    if not main_item and items:
+                        main_item = items[0]
+
+                    # If there are no items at all, skip this order
+                    if not main_item:
                         _logger.info(
-                            f"Order {order_number} has no valid items after filtering discounts"
+                            f"Order {order_number} has no valid items to use as main item"
                         )
                         continue
 
-                    # We'll use the first non-discount item as the primary product
-                    main_item = items[0]
                     api_id = main_item.get("orderItemId")
 
                     # Store all items as JSON for reference
@@ -569,6 +621,7 @@ class ApiProduct(models.Model):
                         "customer_email": customer_email,
                         "item_details": item_details_json,
                         "sku": sku,
+                        "store_id": store_id,
                         "image_url": image_url,
                         "product_name": product_name,
                         "customer_notes": customer_notes,
@@ -597,6 +650,48 @@ class ApiProduct(models.Model):
                 # Update the orders count on the source
                 if added_count > 0:
                     source.increment_orders_count(added_count)
+
+                # Store the collected store IDs in the source settings
+                if unique_store_ids:
+                    # Check if the source already has store data
+                    existing_stores = []
+                    if source.store_ids_data:
+                        try:
+                            existing_stores = json.loads(source.store_ids_data)
+                            existing_store_ids = {
+                                store["storeId"] for store in existing_stores
+                            }
+
+                            # Add any new stores found
+                            for store_id, store_info in unique_store_ids.items():
+                                if store_id not in existing_store_ids:
+                                    # If we don't have a store name, try to fetch it
+                                    if not store_info["storeName"]:
+                                        store_details = source.fetch_store_by_id(
+                                            store_id
+                                        )
+                                        if store_details and store_details.get(
+                                            "storeName"
+                                        ):
+                                            store_info["storeName"] = store_details.get(
+                                                "storeName"
+                                            )
+                                    existing_stores.append(store_info)
+                                    _logger.info(
+                                        f"Added new store to source {source.name}: ID={store_id}, Name={store_info['storeName']}"
+                                    )
+                        except (ValueError, json.JSONDecodeError):
+                            # Invalid JSON, replace with new data
+                            existing_stores = list(unique_store_ids.values())
+                    else:
+                        # No existing store data, use the new data
+                        existing_stores = list(unique_store_ids.values())
+
+                    # Update the source with the updated store data
+                    source.write({"store_ids_data": json.dumps(existing_stores)})
+                    _logger.info(
+                        f"Updated store information for source {source.name}: {len(existing_stores)} stores"
+                    )
 
                 # Update success message to show more detailed counts
                 message = (

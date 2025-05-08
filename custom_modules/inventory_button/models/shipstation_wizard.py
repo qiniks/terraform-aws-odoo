@@ -1,27 +1,18 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+import logging
+from odoo.exceptions import UserError
 
-
-class ShipstationOption(models.Model):
-    _name = "shipstation.option"
-    _description = "Shipstation Option"
-    _order = "name"
-
-    name = fields.Char(string="Name", required=True)
-    code = fields.Char(string="Code", required=True)
-
-    _sql_constraints = [
-        ("code_uniq", "unique(code)", "Shipstation code must be unique!"),
-    ]
+_logger = logging.getLogger(__name__)
 
 
 class ShipstationSelectionWizard(models.TransientModel):
     _name = "shipstation.selection.wizard"
-    _description = "Shipstation Selection Wizard"
+    _description = "ShipStation Selection Wizard"
 
-    product_id = fields.Many2one("api.product", string="Product", required=True)
+    product_id = fields.Many2one("api.product", string="Order", required=True)
     shipstation_ids = fields.Many2many(
         "shipstation.option",
-        string="Shipstations",
+        string="ShipStation Accounts",
         required=True,
     )
 
@@ -29,10 +20,12 @@ class ShipstationSelectionWizard(models.TransientModel):
 
     @api.model
     def default_get(self, fields_list):
-        # Populate default shipstation options if they don't exist yet
         res = super(ShipstationSelectionWizard, self).default_get(fields_list)
+        active_id = self.env.context.get("active_id")
+        if active_id:
+            res["product_id"] = active_id
 
-        # Check if shipstation options exist, if not create them
+        # Populate default shipstation options if they don't exist yet
         options = self.env["shipstation.option"].search([])
         if not options:
             default_options = []
@@ -191,4 +184,51 @@ class ShipstationSelectionWizard(models.TransientModel):
                 "default_product_id": self.product_id.id,
             },
             "flags": {"initial_mode": "edit"},
+        }
+
+    def action_send_to_shipstation(self):
+        self.ensure_one()
+
+        if not self.product_id:
+            raise UserError(_("No order selected."))
+
+        if not self.shipstation_ids:
+            raise UserError(_("Please select at least one ShipStation account."))
+
+        # Check if the order is in 'done' state
+        if self.product_id.state != "done":
+            raise UserError(
+                _("Only orders in 'Done' status can be sent to ShipStation.")
+            )
+
+        # Update the ShipStation information on the product
+        shipstation_ids = self.shipstation_ids.ids
+
+        # Update order with ShipStation information and change state
+        self.product_id.write(
+            {
+                "shipstation_ids": [(6, 0, shipstation_ids)],
+                "state": "synced_with_shipstation",
+                "shipstation_status": "synced",
+                "shipstation_sync_date": fields.Datetime.now(),
+            }
+        )
+
+        # Post message in chatter
+        self.product_id.message_post(
+            body=_("Order sent to ShipStation accounts: %s")
+            % ", ".join(self.shipstation_ids.mapped("name")),
+            message_type="notification",
+        )
+
+        # Return success notification
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Success"),
+                "message": _("Order successfully sent to ShipStation"),
+                "sticky": False,
+                "type": "success",
+            },
         }

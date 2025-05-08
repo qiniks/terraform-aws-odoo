@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+    <!-- Override the existing “Inventory” menu name -->
+    <record id="stock.menu_stock_root" model="ir.ui.menu">
+      <field name="name">Orders</field>
+    </record>
+  </data>
+</odoo>

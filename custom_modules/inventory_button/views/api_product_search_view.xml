@@ -9,7 +9,14 @@
                 <field name="api_id"/>
                 <field name="design"/>
                 <field name="email"/>
-                <filter string="Fast Ship" name="fast_ship" domain="[('fast_ship', '=', True)]"/>
+                <field name="order_number" string="Order Number"/>
+                <field name="customer_email" string="Customer"/>
+                <field name="sku" string="SKU"/>
+                <field name="designer_id"/>
+                
+                <!-- Shop/Store Filter -->
+                <field name="store_name" string="Shop" filter_domain="[('store_name', 'ilike', self)]"/>
+                <field name="store_id" string="Store ID"/>
                 
                 <!-- Tags filters -->
                 <separator/>
@@ -17,11 +24,31 @@
                 <filter string="Bulk Order" name="tag_bulk" domain="[('quantity', '>', 10)]"/>
                 <filter string="Custom" name="tag_custom" domain="[('design', '!=', False), ('design', '!=', '')]"/>
                 
+                <!-- Order Status Filters -->
+                <separator/>
+                <filter string="Pending" name="state_all_orders" domain="[('state', '=', 'all_orders')]" help="Orders waiting to be processed"/>
+                <filter string="Processing" name="state_processing" domain="[('state', '=', 'processing')]" help="Orders in production"/>
+                <filter string="Approving" name="state_approving" domain="[('state', '=', 'approving')]" help="Orders waiting for approval"/>
+                <filter string="Done" name="state_done" domain="[('state', '=', 'done')]" help="Completed orders ready for shipment"/>
+                
+                <!-- Filter for orders ready for ShipStation -->
+                <separator/>
+                <filter string="Ready for ShipStation" name="ready_for_shipstation" domain="[('state', '=', 'done'), ('shipstation_status', '!=', 'synced')]" help="Completed orders not yet sent to ShipStation"/>
+                <filter string="Synced with ShipStation" name="shipstation_synced" domain="[('shipstation_status', '=', 'synced')]" help="Orders already sent to ShipStation"/>
+                
+                <!-- Producer filter -->
+                <separator/>
+                <filter string="My Orders" name="my_orders" domain="[('designer_id.user_id', '=', uid)]" help="Orders assigned to me"/>
+                <filter string="Unassigned" name="unassigned" domain="[('designer_id', '=', False)]" help="Orders not assigned to any producer"/>
+                
                 <group expand="0" string="Group By">
+                    <filter string="Shop" name="groupby_store" context="{'group_by': 'store_name'}"/>
                     <filter string="Design" name="groupby_design" context="{'group_by': 'design'}"/>
-                    <filter string="Date" name="groupby_date" context="{'group_by': 'date'}"/>
+                    <filter string="Order Date" name="groupby_date" context="{'group_by': 'order_date'}"/>
+                    <filter string="Ship By" name="groupby_ship_date" context="{'group_by': 'ship_by_date'}"/>
                     <filter string="Fast Ship" name="groupby_fast_ship" context="{'group_by': 'fast_ship'}"/>
                     <filter string="Status" name="groupby_state" context="{'group_by': 'state'}"/>
+                    <filter string="Producer" name="groupby_designer" context="{'group_by': 'designer_id'}"/>
                 </group>
             </search>
         </field>

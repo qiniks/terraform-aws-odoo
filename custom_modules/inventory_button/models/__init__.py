@@ -8,3 +8,5 @@ from . import admin_settings
 from . import api_statistics
 from . import inventory_designer
 from . import inventory_dashboard
+from . import bulk_actions_wizard
+from . import shipstation_option

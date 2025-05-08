@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Parent Menu Item (placed first to avoid dependency issues) -->
+    <menuitem id="menu_inventory_admin"
+              name="Admin"
+              sequence="99"
+              web_icon="inventory_button,static/description/admin_icon.png"/>
+
     <!-- Form View -->
     <record id="view_admin_settings_form" model="ir.ui.view">
         <field name="name">inventory.admin.settings.form</field>
@@ -60,8 +66,18 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Description" name="description">
-                            <field name="description" placeholder="Add description here..."/>
+                        <page string="Stores" name="stores">
+                            <div class="alert alert-info" role="alert">
+                                <p><strong>Store Information</strong> displays all available store IDs and names from ShipStation.</p>
+                                <p>Store IDs are automatically collected when orders are fetched, but you can also update them manually using the button below.</p>
+                            </div>
+                            <div class="text-right mb-3">
+                                <button name="fetch_store_information" type="object" 
+                                        string="Update Stores" 
+                                        class="btn btn-primary"
+                                        icon="fa-refresh"/>
+                            </div>
+                            <field name="store_ids_display" widget="html" readonly="1"/>
                         </page>
                         <page string="Webhooks" name="webhooks">
                             <div class="alert alert-info" role="alert">
@@ -172,18 +188,6 @@
         </field>
     </record>
 
-    <!-- Top Menu Item -->
-    <menuitem id="menu_inventory_admin"
-              name="Admin"
-              sequence="99"
-              web_icon="inventory_button,static/description/admin_icon.png"/>
-
-    <!-- Admin Panel Main Menu - Parent for the dropdown menus -->
-    <menuitem id="menu_admin_parent"
-              name="Admin Panel"
-              parent="stock.menu_stock_root"
-              sequence="99"/>
-              
     <!-- Admin Settings Submenu -->
     <menuitem id="menu_admin_settings"
               name="API Sources"

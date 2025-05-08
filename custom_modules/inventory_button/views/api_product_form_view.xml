@@ -7,7 +7,7 @@
             <form>
                 <header>
                     <field name="state" widget="statusbar" options="{'clickable': '1'}" 
-                           statusbar_visible="all_products,processing,approving,done"/>
+                        statusbar_visible="all_orders,processing,approving,done"/>
                     <button name="toggle_manual_urgent" type="object" 
                             string="Mark as Urgent" class="btn btn-sm btn-outline-danger"
                             attrs="{'invisible': [('manual_urgent', '=', True)]}"/>
@@ -98,8 +98,26 @@
                         </div>
                     </div>
 
+                    <!-- ShipStation Sync Information -->
+                    <div class="mb-3" attrs="{'invisible': [('state', '!=', 'synced_with_shipstation')]}">
+                        <div class="alert alert-success d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-check-circle fa-lg me-2"></i>
+                                <div>
+                                    <strong>Synced with ShipStation</strong>
+                                    <div class="text-muted">
+                                        <field name="shipstation_sync_date" readonly="1" options="{'widget': 'datetime'}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <field name="shipstation_ids" widget="many2many_tags" readonly="1"/>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- ShipStation Ready to Ship -->
-                    <div class="mb-3" attrs="{'invisible': [('state', '!=', 'done')]}">
+                    <div class="mb-3" attrs="{'invisible': ['|', ('state', '!=', 'done'), ('shipstation_status', '=', 'synced')]}">
                         <div class="alert alert-primary d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center">
                                 <i class="fa fa-paper-plane fa-lg me-2"></i>
@@ -129,7 +147,7 @@
                             <field name="order_id" invisible="1"/>
                             <field name="item_details" invisible="1"/>
                             <field name="unread_messages" invisible="1"/>
-
+                            <field name="shipstation_status" invisible="1"/>
                         </group>
                         <group string="Product Information">
                             <field name="sku"/>
@@ -164,32 +182,19 @@
                     <field name="order_id" invisible="1"/>
                     <field name="item_details" invisible="1"/>
                     <field name="unread_messages" invisible="1"/>
+                    <field name="shipstation_status" invisible="1"/>
 
                     <notebook>
                         <page string="Order Items" name="order_items" attrs="{'invisible': [('item_details', '=', False)]}">
                             <field name="parsed_items" widget="html"/>
                         </page>
-
-                        <page string="Product Resources" name="additional_info">
+                        <page string="ShipStation" name="shipstation" attrs="{'invisible': [('shipstation_ids', '=', [(6, 0, [])])]}">
                             <group>
-                                <group string="Product image">
-                                    <field name="image_url" widget="url" placeholder="Preview Image URL" attrs="{'readonly': True}"/>
-                                </group>
+                                <field name="shipstation_ids" widget="many2many_tags" readonly="1"/>
+                                <field name="shipstation_sync_date" readonly="1"/>
+                                <field name="shipstation_status" readonly="1"/>
                             </group>
                         </page>
-                        <!-- <page string="Designer's Assignments" name="designer_assignments" 
-                              attrs="{'invisible': [('user_id', '=', False)]}">
-                            <field name="designer_assigned_products" readonly="1">
-                                <tree decoration-danger="manual_urgent == True" decoration-warning="design_difficulty > 2">
-                                    <field name="name"/>
-                                    <field name="order_date"/>
-                                    <field name="state"/>
-                                    <field name="delivery_date"/>
-                                    <field name="design_difficulty" widget="priority"/>
-                                    <field name="manual_urgent" widget="boolean_toggle"/>
-                                </tree>
-                            </field>
-                        </page> -->
                     </notebook>
                 </sheet>
 

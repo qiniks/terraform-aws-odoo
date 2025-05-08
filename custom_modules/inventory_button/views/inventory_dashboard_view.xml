@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Dashboard View for Products and Designers Statistics -->
-        
         <!-- Main Dashboard Form View -->
         <record id="view_inventory_statistics_dashboard_form" model="ir.ui.view">
             <field name="name">inventory.statistics.dashboard.form</field>
@@ -10,48 +8,38 @@
             <field name="arch" type="xml">
                 <form string="Inventory Dashboard">
                     <sheet>
-                        <!-- Add the dashboard_active_view field -->
                         <field name="dashboard_active_view" invisible="1"/>
-                        
                         <div class="oe_title">
                             <h1>Inventory Statistics Dashboard</h1>
                         </div>
-                        
-                        <!-- Dashboard Navigation Buttons -->
                         <div class="oe_button_box" name="button_box">
                             <button name="action_view_product_stats" type="object" 
                                     class="oe_stat_button" icon="fa-cubes"
                                     string="Product Statistics" 
                                     context="{'active_view': 'products'}"
-                                    help="View product statistics and analytics">
-                            </button>
+                                    help="View product statistics and analytics"/>
                             <button name="action_view_designer_stats" type="object" 
                                     class="oe_stat_button" icon="fa-users"
                                     string="Designer Statistics" 
                                     context="{'active_view': 'designers'}"
-                                    help="View designer performance statistics">
-                            </button>
+                                    help="View designer performance statistics"/>
                         </div>
-
-                        <!-- Date Range Selection -->
                         <group>
                             <group>
                                 <field name="date_from" string="From Date"/>
                                 <field name="date_to" string="To Date"/>
+                                <field name="state_filter" string="State" widget="selection"/>
                             </group>
                             <group>
                                 <button name="action_apply_date_filter" type="object" 
                                         string="Apply Filter" class="btn-primary"
-                                        help="Apply date filter to update statistics"/>
+                                        help="Apply date and state filters to update statistics"/>
                                 <button name="action_reset_date_filter" type="object" 
                                         string="Reset" class="btn-secondary"
-                                        help="Reset to default date range"/>
+                                        help="Reset to default date range and clear state filter"/>
                             </group>
                         </group>
-
-                        <!-- Main Dashboard Content -->
                         <div class="o_dashboard_content">
-                            <!-- Overview Cards Section -->
                             <h2>Overview</h2>
                             <div class="row mb32">
                                 <div class="col-lg-3 col-md-6">
@@ -87,8 +75,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Revenue Cards Section -->
                             <h2>Financial Overview</h2>
                             <div class="row mb32">
                                 <div class="col-lg-6 col-md-6">
@@ -108,30 +94,32 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Order Frequency Chart -->
                             <h2>Order Frequency by Day</h2>
                             <div class="row mb32">
                                 <div class="col-md-12">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h4>Daily Order Distribution (in development)</h4>
+                                            <h4>Daily Order Distribution</h4>
                                         </div>
-
+                                        <div class="card-body o_inventory_dashboard" style="height: 300px;">
+                                            <canvas class="daily_order_chart_canvas" id="order_frequency_chart" data-field="dashboard_order_frequency_chart" width="400" height="280" style="width:100%; height:100%;"/>
+                                            <field name="dashboard_order_frequency_chart" widget="text" readonly="1" class="chart_data_field"/>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Product Statistics Section (Shown/Hidden based on context) -->
                             <div name="product_stats_section" attrs="{'invisible': [('dashboard_active_view', '!=', 'products')]}">
                                 <h2>Product Statistics</h2>
                                 <div class="row mb16">
                                     <div class="col-md-6">
                                         <div class="card">
                                             <div class="card-header">
-                                                <h4>Order Status Distribution (in development)</h4>
+                                                <h4>Order Status Distribution</h4>
                                             </div>
-
+                                            <div class="card-body o_inventory_dashboard" style="height: 300px;">
+                                                <canvas class="order_status_chart_canvas" id="product_status_chart" data-field="dashboard_product_status_chart" width="400" height="280" style="width:100%; height:100%;"/>
+                                                <field name="dashboard_product_status_chart" invisible="1"/>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -140,7 +128,7 @@
                                                 <h4>Recent Orders</h4>
                                             </div>
                                             <div class="card-body">
-                                                <field name="dashboard_recent_orders" widget="html" />
+                                                <field name="dashboard_recent_orders" widget="html"/>
                                             </div>
                                         </div>
                                     </div>
@@ -152,12 +140,23 @@
                                                 <h4>Orders by Status</h4>
                                             </div>
                                             <div class="card-body">
-                                                <field name="dashboard_orders_by_status" widget="html" />
+                                                <field name="dashboard_orders_by_status" widget="html"/>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Products Revenue Breakdown -->
+                                <div class="row mb16">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4>Geographic Order Statistics</h4>
+                                            </div>
+                                            <div class="card-body">
+                                                <field name="dashboard_geographic_stats_table" widget="html"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row mb16">
                                     <div class="col-md-12">
                                         <div class="card">
@@ -165,14 +164,12 @@
                                                 <h4>Product Revenue Breakdown</h4>
                                             </div>
                                             <div class="card-body">
-                                                <field name="dashboard_product_revenue_table" widget="html" />
+                                                <field name="dashboard_product_revenue_table" widget="html"/>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Designer Statistics Section (Shown/Hidden based on context) -->
                             <div name="designer_stats_section" attrs="{'invisible': [('dashboard_active_view', '!=', 'designers')]}">
                                 <h2>Designer Statistics</h2>
                                 <div class="row mb16">
@@ -180,6 +177,10 @@
                                         <div class="card">
                                             <div class="card-header">
                                                 <h4>Designer Performance</h4>
+                                            </div>
+                                            <div class="card-body o_inventory_dashboard" style="height: 300px;">
+                                                <canvas class="designer_performance_chart_canvas" id="designer_performance_chart" data-field="dashboard_designer_performance_chart" width="400" height="280" style="width:100%; height:100%;"/>
+                                                <field name="dashboard_designer_performance_chart" invisible="1"/>
                                             </div>
                                         </div>
                                     </div>
@@ -189,7 +190,7 @@
                                                 <h4>Top Designers</h4>
                                             </div>
                                             <div class="card-body">
-                                                <field name="dashboard_top_designers" widget="html" />
+                                                <field name="dashboard_top_designers" widget="html"/>
                                             </div>
                                         </div>
                                     </div>
@@ -201,12 +202,11 @@
                                                 <h4>Designer Detailed Statistics</h4>
                                             </div>
                                             <div class="card-body">
-                                                <field name="dashboard_designer_stats_table" widget="html" />
+                                                <field name="dashboard_designer_stats_table" widget="html"/>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Designer Revenue Breakdown -->
                                 <div class="row mb16">
                                     <div class="col-md-12">
                                         <div class="card">
@@ -214,7 +214,7 @@
                                                 <h4>Designer Revenue Analysis</h4>
                                             </div>
                                             <div class="card-body">
-                                                <field name="dashboard_designer_revenue_table" widget="html" />
+                                                <field name="dashboard_designer_revenue_table" widget="html"/>
                                             </div>
                                         </div>
                                     </div>
@@ -226,7 +226,6 @@
             </field>
         </record>
 
-        <!-- Dashboard Action -->
         <record id="action_inventory_statistics_dashboard" model="ir.actions.act_window">
             <field name="name">Inventory Dashboard</field>
             <field name="res_model">inventory.dashboard</field>
@@ -243,8 +242,7 @@
                 </p>
             </field>
         </record>
-        
-        <!-- Add a server action to get or create the dashboard record -->
+
         <record id="action_get_dashboard_record" model="ir.actions.server">
             <field name="name">Get Dashboard Record</field>
             <field name="model_id" ref="model_inventory_dashboard"/>
@@ -252,24 +250,22 @@
             <field name="code">
 dashboard = model.get_dashboard_record()
 action = {
-'type': 'ir.actions.act_window',
-'res_model': 'inventory.dashboard',
-'view_mode': 'form',
-'res_id': dashboard.id,
-'view_id': env.ref('inventory_button.view_inventory_statistics_dashboard_form').id,
-'target': 'main',
-'context': {'active_view': 'products'},
+    'type': 'ir.actions.act_window',
+    'res_model': 'inventory.dashboard',
+    'view_mode': 'form',
+    'res_id': dashboard.id,
+    'view_id': env.ref('inventory_button.view_inventory_statistics_dashboard_form').id,
+    'target': 'main',
+    'context': {'active_view': 'products'},
 }
 result = action
             </field>
         </record>
 
-        <!-- Dashboard Menu Entry - Link to server action instead of window action directly -->
         <menuitem id="menu_inventory_statistics_dashboard"
             name="Statistics Dashboard"
             parent="menu_admin_statistics"
             action="action_get_dashboard_record"
             sequence="5"/>
-
     </data>
 </odoo>

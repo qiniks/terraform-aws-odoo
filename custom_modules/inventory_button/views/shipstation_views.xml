@@ -1,52 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Shipstation Option List View -->
+    <!-- ShipStation Option Tree View -->
     <record id="view_shipstation_option_tree" model="ir.ui.view">
         <field name="name">shipstation.option.tree</field>
         <field name="model">shipstation.option</field>
         <field name="arch" type="xml">
-            <tree editable="bottom" delete="1">
+            <tree>
+                <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="code"/>
+                <field name="order_count"/>
+                <field name="last_sync"/>
+                <field name="active"/>
             </tree>
         </field>
     </record>
     
-    <!-- Shipstation Option Form View -->
+    <!-- ShipStation Option Form View -->
     <record id="view_shipstation_option_form" model="ir.ui.view">
         <field name="name">shipstation.option.form</field>
         <field name="model">shipstation.option</field>
         <field name="arch" type="xml">
-            <form delete="1">
+            <form>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options="{'terminology': 'archive'}"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="ShipStation Account Name"/>
+                        </h1>
+                    </div>
                     <group>
-                        <field name="name"/>
-                        <field name="code"/>
+                        <group>
+                            <field name="code" placeholder="Account Identifier"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="order_count"/>
+                            <field name="last_sync"/>
+                        </group>
                     </group>
+                    <notebook>
+                        <page string="API Configuration" name="api_config">
+                            <group>
+                                <field name="api_url"/>
+                                <field name="api_key" password="True"/>
+                                <field name="api_secret" password="True"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
     </record>
     
-    <!-- Shipstation Action -->
-    <record id="action_shipstation_options" model="ir.actions.act_window">
-        <field name="name">Shipstation Options</field>
+    <!-- ShipStation Option Search View -->
+    <record id="view_shipstation_option_search" model="ir.ui.view">
+        <field name="name">shipstation.option.search</field>
+        <field name="model">shipstation.option</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+    
+    <!-- ShipStation Option Action -->
+    <record id="action_shipstation_option" model="ir.actions.act_window">
+        <field name="name">ShipStation Accounts</field>
         <field name="res_model">shipstation.option</field>
         <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_shipstation_option_tree"/>
+        <field name="view_ids" eval="[(5, 0, 0), 
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_shipstation_option_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_shipstation_option_form')})]"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Create a new shipstation option
+                Create the first ShipStation account
             </p>
             <p>
-                Define shipstation options that can be selected when sending products.
+                Create ShipStation accounts to easily send orders to different ShipStation configurations.
             </p>
         </field>
     </record>
     
-    <!-- Menu Item -->
-    <menuitem id="menu_shipstation_options" 
-              name="Shipstations"
-              parent="stock.menu_stock_config_settings"
-              action="action_shipstation_options"
-              sequence="100"/>
+    <!-- Menu Item - Add to Admin Panel -->
+    <menuitem id="menu_shipstation_accounts" 
+              name="ShipStation Accounts" 
+              parent="menu_admin_parent" 
+              action="action_shipstation_option" 
+              sequence="15"/>
 </odoo>

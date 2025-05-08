@@ -45,6 +45,20 @@ class ApiProduct(models.Model):
     shipping_address = fields.Text("Shipping Address", help="Full shipping address")
     payment_method = fields.Char("Payment Method", help="Method of payment")
 
+    store_id = fields.Integer("Store ID", help="ID of the store in ShipStation")
+    store_name = fields.Char(
+        "Store Name",
+        compute="_compute_store_name",
+        store=True,
+        help="Name of the store in ShipStation",
+    )
+    store_color = fields.Char(
+        "Store Color",
+        compute="_compute_store_name",
+        store=True,
+        help="Color for the store in the UI",
+    )
+
     # Legacy fields - still used but will get values from ShipStation equivalents
     date = fields.Date("Date", help="Order date")
     design = fields.Char("Design", help="Design identifier")
@@ -86,16 +100,32 @@ class ApiProduct(models.Model):
     task_type = fields.Char("Task Type", help="Type of task assigned to designer")
     rating = fields.Float("Rating", help="Product rating")
 
-
-
-
-
-
     # Changed to Float instead of Monetary, but will format display with $ sign
     design_price = fields.Float(
         string="Design Price ($)",
         help="Price for the design work in USD",
         digits=(10, 2),  # Ensures 2 decimal places for currency
+    )
+
+    # ShipStation integration fields
+    shipstation_ids = fields.Many2many(
+        "shipstation.option",
+        string="ShipStation Accounts",
+        help="ShipStation accounts this order has been sent to",
+    )
+    shipstation_sync_date = fields.Datetime(
+        string="Last ShipStation Sync",
+        readonly=True,
+        help="Last time this order was synchronized with ShipStation",
+    )
+    shipstation_status = fields.Selection(
+        [
+            ("pending", "Pending"),
+            ("synced", "Synced"),
+            ("error", "Error"),
+        ],
+        string="ShipStation Sync Status",
+        default="pending",
     )
 
     # Added method to display formatted price with $ sign
@@ -141,13 +171,14 @@ class ApiProduct(models.Model):
     # State field with selection options
     state = fields.Selection(
         [
-            ("all_products", "All Products"),
+            ("all_orders", "All Orders"),
             ("processing", "Processing"),
             ("approving", "Approving"),
             ("done", "Done"),
+            ("synced_with_shipstation", "Synced with ShipStation"),
         ],
         string="Status",
-        default="all_products",
+        default="all_orders",
         tracking=True,
         readonly=False,
         group_expand="_read_group_state",
@@ -227,7 +258,7 @@ class ApiProduct(models.Model):
     def create(self, vals):
         # Set default state if not provided
         if "state" not in vals:
-            vals["state"] = "all_products"
+            vals["state"] = "all_orders"
         return super(ApiProduct, self).create(vals)
 
     def toggle_manual_urgent(self):
@@ -259,6 +290,52 @@ class ApiProduct(models.Model):
                 record.turnaround_hours = delta.days * 24 + delta.seconds / 3600
             else:
                 record.turnaround_hours = 0.0
+
+    @api.depends("store_id", "source_id", "source_id.store_ids_data")
+    def _compute_store_name(self):
+        """Look up store name and color from source settings based on store_id"""
+        for record in self:
+            store_name = (
+                str(record.store_id) if record.store_id else ""
+            )  # Default to ID as string
+            store_color = "#CCCCCC"  # Default gray color
+
+            # Only proceed if we have both source and store_id
+            if record.source_id and record.store_id:
+                if record.source_id.store_ids_data:
+                    try:
+                        stores_data = json.loads(record.source_id.store_ids_data)
+                        # Find store with matching ID
+                        for store in stores_data:
+                            if store.get("storeId") == record.store_id:
+                                store_name = store.get("storeName", "")
+                                store_color = store.get("color", "#CCCCCC")
+                                break
+                    except (json.JSONDecodeError, ValueError) as e:
+                        _logger.warning(
+                            f"Error parsing store data for source {record.source_id.name}: {e}"
+                        )
+
+            record.store_name = store_name or str(record.store_id) or ""
+            record.store_color = store_color
+
+    @api.model
+    def get_all_shops(self):
+        """
+        Get all unique shops/stores for the shop filter dropdown
+        Returns a list of dictionaries with shop details
+        """
+        # Query unique store IDs and names
+        query = """
+            SELECT DISTINCT store_id, store_name, store_color
+            FROM api_product 
+            WHERE store_id IS NOT NULL
+            ORDER BY store_name
+        """
+        self.env.cr.execute(query)
+        shops = self.env.cr.dictfetchall()
+
+        return shops
 
     @api.model
     def generate_mock_assignment_data(self, days_range=30):
@@ -331,7 +408,7 @@ class ApiProduct(models.Model):
                 # Determine which state to use based on our distribution
                 random_num = random.random() * 100  # 0-100
                 cumulative = 0
-                selected_state = "all_products"  # Default fallback
+                selected_state = "all_orders"  # Default fallback
 
                 for state, percentage in state_distribution.items():
                     cumulative += percentage
@@ -384,7 +461,7 @@ class ApiProduct(models.Model):
             # Determine which state to use based on our distribution
             random_num = random.random() * 100  # 0-100
             cumulative = 0
-            selected_state = "all_products"  # Default fallback
+            selected_state = "all_orders"  # Default fallback
 
             for state, percentage in existing_state_distribution.items():
                 cumulative += percentage
